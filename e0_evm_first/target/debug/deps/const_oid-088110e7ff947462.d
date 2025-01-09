@@ -1,0 +1,11 @@
+C:\DASHBOARD\BROGRAM\rust_dep\2_evm\e0_evm_first\target\debug\deps\libconst_oid-088110e7ff947462.rmeta: C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\lib.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\checked.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\arcs.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\encoder.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\error.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\parser.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\../README.md
+
+C:\DASHBOARD\BROGRAM\rust_dep\2_evm\e0_evm_first\target\debug\deps\const_oid-088110e7ff947462.d: C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\lib.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\checked.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\arcs.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\encoder.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\error.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\parser.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\../README.md
+
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\lib.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\checked.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\arcs.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\encoder.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\error.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\parser.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\const-oid-0.9.6\src\../README.md:

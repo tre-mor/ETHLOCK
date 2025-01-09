@@ -1,0 +1,10 @@
+C:\DASHBOARD\BROGRAM\rust_dep\2_evm\e0_evm_first\target\release\deps\librustls_pki_types-8fd34b4fa0b0a8e9.rmeta: C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src/lib.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src\base64.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src\server_name.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src\pem.rs
+
+C:\DASHBOARD\BROGRAM\rust_dep\2_evm\e0_evm_first\target\release\deps\librustls_pki_types-8fd34b4fa0b0a8e9.rlib: C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src/lib.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src\base64.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src\server_name.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src\pem.rs
+
+C:\DASHBOARD\BROGRAM\rust_dep\2_evm\e0_evm_first\target\release\deps\rustls_pki_types-8fd34b4fa0b0a8e9.d: C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src/lib.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src\base64.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src\server_name.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src\pem.rs
+
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src/lib.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src\base64.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src\server_name.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\rustls-pki-types-1.10.1\src\pem.rs:
