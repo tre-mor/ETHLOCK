@@ -12,7 +12,7 @@ use alloy::
     },
     rpc::types::
     {
-        Block, BlockTransactionsKind
+        Block, BlockTransactionsKind, Header
     },
     transports::http::Http,
 };
@@ -47,6 +47,63 @@ pub struct BlockStructSimple
     parent_hash: [u8; 32],
 }
 
+#[derive(Debug)]
+pub struct BlockHeaderData
+{
+    pub parent_hash: B256,
+    pub ommers_hash: B256,
+    pub beneficiary: Address,
+    pub state_root: B256,
+    pub transactions_root: B256,
+    pub receipts_root: B256,
+    pub logs_bloom: Bloom,
+    pub difficulty: U256,
+    pub number: u64,
+    pub gas_limit: u64,
+    pub gas_used: u64,
+    pub timestamp: u64,
+    pub extra_data: Bytes,
+    pub mix_hash: B256,
+    pub nonce: B64,
+    pub base_fee_per_gas: Option<u64>,
+    pub withdrawals_root: Option<B256>,
+    pub blob_gas_used: Option<u64>,
+    pub excess_blob_gas: Option<u64>,
+    pub parent_beacon_block_root: Option<B256>,
+    pub requests_hash: Option<B256>,
+}
+
+impl From<Header> for BlockHeaderData
+{
+    fn from(header: Header) -> Self
+    {
+        BlockHeaderData
+        {
+            parent_hash: header.parent_hash,
+            ommers_hash: header.ommers_hash,
+            beneficiary: header.beneficiary,
+            state_root: header.state_root,
+            transactions_root: header.transactions_root,
+            receipts_root: header.receipts_root,
+            logs_bloom: header.logs_bloom,
+            difficulty: header.difficulty,
+            number: header.number,
+            gas_limit: header.gas_limit,
+            gas_used: header.gas_used,
+            timestamp: header.timestamp,
+            extra_data: header.extra_data.clone(),
+            mix_hash: header.mix_hash,
+            nonce: header.nonce,
+            base_fee_per_gas: header.base_fee_per_gas,
+            withdrawals_root: header.withdrawals_root,
+            blob_gas_used: header.blob_gas_used,
+            excess_blob_gas: header.excess_blob_gas,
+            parent_beacon_block_root: header.parent_beacon_block_root,
+            requests_hash: header.requests_hash
+        }
+    }
+}
+
 pub async fn get_latest_block_number(provider: &RootProvider<Http<Client>>) -> Result<u64, Box<dyn Error>>
 {
     let latest_block_number = provider.get_block_number().await?;
@@ -62,58 +119,70 @@ pub async fn get_latest_n_block_numbers(latest_block_number: u64, n: u64) -> Res
     Ok(returned_vec)
 }
 
-pub async fn build_block_struct(provider: &RootProvider<Http<Client>>, number_or_tag: BlockNumberOrTag) -> Result<BlockStruct, Box<dyn Error>>
+pub async fn build_block_struct(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockStruct, Box<dyn Error>>
 
 {  
     // let parsed_block_number: BlockNumberOrTag = BlockNumberOrTag::Number(block_number);
-    let block_data: Option<Block> = provider.get_block_by_number(number_or_tag, BlockTransactionsKind::Full).await?;
+    let block_data_option: Option<Block> = provider.get_block_by_number(ident, BlockTransactionsKind::Full).await?;
 
-    let block_data_unwrapped = block_data.unwrap();
+    let block_data = block_data_option.unwrap();
 
     let returned_struct = BlockStruct
     {
-        block_number: block_data_unwrapped.header.number,
-        hash: block_data_unwrapped.header.hash.0,
-        timestamp: block_data_unwrapped.header.timestamp,
-        parent_hash: block_data_unwrapped.header.parent_hash.0,
-        transactions: block_data_unwrapped.transactions.hashes().map(|tx| tx.0).collect(),
-        gas_used: block_data_unwrapped.header.gas_used,
-        gas_limit: block_data_unwrapped.header.gas_limit,
-        difficulty: block_data_unwrapped.header.difficulty,
-        nonce: block_data_unwrapped.header.nonce.into(),
-        miner: *block_data_unwrapped.header.beneficiary.0,
-        transaction_root: block_data_unwrapped.header.transactions_root.0,
-        state_root: block_data_unwrapped.header.state_root.0,
-        receipts_root: block_data_unwrapped.header.receipts_root.0,
-        logs_bloom: *block_data_unwrapped.header.logs_bloom.0,
+        block_number: block_data.header.number,
+        hash: block_data.header.hash.0,
+        timestamp: block_data.header.timestamp,
+        parent_hash: block_data.header.parent_hash.0,
+        transactions: block_data.transactions.hashes().map(|tx| tx.0).collect(),
+        gas_used: block_data.header.gas_used,
+        gas_limit: block_data.header.gas_limit,
+        difficulty: block_data.header.difficulty,
+        nonce: block_data.header.nonce.into(),
+        miner: *block_data.header.beneficiary.0,
+        transaction_root: block_data.header.transactions_root.0,
+        state_root: block_data.header.state_root.0,
+        receipts_root: block_data.header.receipts_root.0,
+        logs_bloom: *block_data.header.logs_bloom.0,
     };
 
     Ok(returned_struct)
 }
 
-pub async fn build_block_struct_simple(provider: &RootProvider<Http<Client>>, number_or_tag: BlockNumberOrTag) -> Result<BlockStructSimple, Box<dyn Error>>
+pub async fn build_block_struct_simple(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockStructSimple, Box<dyn Error>>
 {
     // let parsed_block_number: BlockNumberOrTag = BlockNumberOrTag::Number(block_number);
     // let parsed_block_number: BlockNumberOrTag = BlockNumberOrTag::Latest;
 
     // println!("parsed number {}", parsed_block_number);
 
-    let block_data = provider.get_block_by_number(number_or_tag, BlockTransactionsKind::Full).await?;
+    let block_data_option = provider.get_block_by_number(ident, BlockTransactionsKind::Full).await?;
     
-    let block_data_unwrapped = block_data.unwrap();
+    let block_data = block_data_option.unwrap();
 
     let returned_struct = BlockStructSimple
     {
-        block_number: block_data_unwrapped.header.number,
-        hash: block_data_unwrapped.header.hash.0,
-        timestamp: block_data_unwrapped.header.timestamp,
-        parent_hash: block_data_unwrapped.header.parent_hash.0,
+        block_number: block_data.header.number,
+        hash: block_data.header.hash.0,
+        timestamp: block_data.header.timestamp,
+        parent_hash: block_data.header.parent_hash.0,
     };
 
     Ok(returned_struct)
 }
 
-// pub async fn view_block_header_data(provider: &RootProvider<Http<Client>>, block_number: u64) -> Result<BlockHeader, Box<dyn Error>>
-// {
-//     let parsed_block_number: BlockNumberOrTag = BlockNumberOrTag::Number(block_number);
-// }
+pub async fn view_block_header_data(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockHeaderData, Box<dyn Error>>
+{
+    let block_data_option = provider.get_block_by_number(ident, BlockTransactionsKind::Full).await?;
+
+    // let header_data: BlockHeaderData = block_data_option.header.into();
+
+    if let Some(block_data) = block_data_option 
+    {
+        let header_data: BlockHeaderData = block_data.header.into();
+        Ok(header_data)
+    }
+    else
+    {
+        Err("Block not found!".into())
+    }
+}
