@@ -1,6 +1,9 @@
 use alloy::
 {
-    consensus::BlockHeader,
+    consensus::
+    {
+        transaction, BlockHeader
+    },
     eips::BlockNumberOrTag,
     primitives::
     {
@@ -12,7 +15,7 @@ use alloy::
     },
     rpc::types::
     {
-        Block, BlockTransactionsKind, Header
+        Block, BlockTransactions, BlockTransactionsKind::Full, Header, Transaction
     },
     transports::http::Http,
 };
@@ -104,6 +107,85 @@ impl From<Header> for BlockHeaderData
     }
 }
 
+#[derive(Debug)]
+pub struct BlockTransactionsData
+{
+    block_number: u64,
+    block_hash: B256,
+    transactions: Vec<TransactionData>,
+}
+
+impl BlockTransactionsData
+{
+    pub async fn build_transaction_data_vec_from_ident(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<Vec<TransactionData>, Box<dyn Error>>
+    {
+        let mut returned_vec: Vec<TransactionData> = Vec::new();
+        let block_data_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
+        
+        if let Some(block_data) = block_data_option
+        {
+            if let BlockTransactions::Full(transactions) = block_data.transactions
+            {
+                for transaction in transactions
+                {
+                    returned_vec.push
+                    (
+                        TransactionData
+                        {
+                            transaction_index: todo!(),
+                            transaction_hash: todo!(),
+                            from: todo!(),
+                            to: todo!(),
+                            value: todo!(),
+                            gas_price: todo!(),
+                            gas: todo!(),
+                            input: todo!(),
+                            block_number: todo!(),
+                            block_hash: todo!(),
+                        }
+                    )
+                }
+            }
+        }
+        
+        Ok(returned_vec)
+    }
+}
+
+#[derive(Debug)]
+pub struct TransactionData
+{
+    transaction_index: u64,
+    transaction_hash: B256,
+    from: Address,
+    to: Option<Address>,
+    value: U256,
+    gas_price: U256,
+    gas: U256,
+    input: Bytes,
+    block_number: u64,
+    block_hash: B256,
+}
+
+// impl From<&Transaction> for TransactionData
+// {
+//     fn from(transaction: &Transaction) -> Self
+//     {
+//         TransactionData
+//         {
+//             transaction_index: transaction.transaction_index,
+//             transaction_hash: transaction.hash,
+//             from: transaction.from,
+//             to: transaction.to,
+//             value: transaction.value,
+//             gas_price: transaction.gas_price,
+//             gas: transaction.gas,
+//             input: transaction.input.clone()
+//         }
+//     }
+// }
+
+
 pub async fn get_latest_block_number(provider: &RootProvider<Http<Client>>) -> Result<u64, Box<dyn Error>>
 {
     let latest_block_number = provider.get_block_number().await?;
@@ -123,7 +205,7 @@ pub async fn build_block_struct(provider: &RootProvider<Http<Client>>, ident: Bl
 
 {  
     // let parsed_block_number: BlockNumberOrTag = BlockNumberOrTag::Number(block_number);
-    let block_data_option: Option<Block> = provider.get_block_by_number(ident, BlockTransactionsKind::Full).await?;
+    let block_data_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
 
     let block_data = block_data_option.unwrap();
 
@@ -155,7 +237,7 @@ pub async fn build_block_struct_simple(provider: &RootProvider<Http<Client>>, id
 
     // println!("parsed number {}", parsed_block_number);
 
-    let block_data_option = provider.get_block_by_number(ident, BlockTransactionsKind::Full).await?;
+    let block_data_option = provider.get_block_by_number(ident, Full).await?;
     
     let block_data = block_data_option.unwrap();
 
@@ -172,7 +254,7 @@ pub async fn build_block_struct_simple(provider: &RootProvider<Http<Client>>, id
 
 pub async fn view_block_header_data(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockHeaderData, Box<dyn Error>>
 {
-    let block_data_option = provider.get_block_by_number(ident, BlockTransactionsKind::Full).await?;
+    let block_data_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
 
     // let header_data: BlockHeaderData = block_data_option.header.into();
 
@@ -186,3 +268,5 @@ pub async fn view_block_header_data(provider: &RootProvider<Http<Client>>, ident
         Err("Block not found!".into())
     }
 }
+
+// pub async fn view_block_transactions_data(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockTransactionsData, Box<dyn Error>>
