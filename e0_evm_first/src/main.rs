@@ -13,6 +13,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>
     let rpc_url = "https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86".parse()?;
     let provider = ProviderBuilder::new().on_http(rpc_url);
 
+    let 
+
     
     // if let Ok(latest_block_number) = block_info::get_latest_block_number(&provider).await
     // {
@@ -39,7 +41,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>
     //     }
     // }
     
-    println!("{:?}", view_block_header_data(&provider, Latest).await);
+    // println!("{:?}", view_block_header_data(&provider, Latest).await);
     
     Ok(())
 }
+
+/* 
+I am building an Ethereum block explorer with Rust, alloy.rs (a rust crate for interfacing with the Ethereum blockchain), Tauri, and Swift. The block explorer will display block number, hash, timestamp, and transaction details. It will also implement basic filtering. Remember to refer to the documentation (the entire repo in the alloy directory and the alloy_rs_book) when writing the code. Prioritize efficiency and clarity. All code must be well explained with comments on every line.
+ */

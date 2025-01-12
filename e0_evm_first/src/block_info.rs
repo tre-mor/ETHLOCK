@@ -22,7 +22,7 @@ use alloy::
     }, 
     rpc::types::
     {
-        Block, BlockTransactions, BlockTransactionsKind::Full, Header, Transaction, TransactionReceipt
+        error, Block, BlockTransactions, BlockTransactionsKind::Full, Header, Transaction, TransactionReceipt
     }, 
     signers::k256::elliptic_curve::FieldBytesEncoding, transports::http::Http
 };
@@ -124,13 +124,81 @@ pub struct BlockTransactionsDetails
 
 impl BlockTransactionsDetails
 {
+    pub async fn build_struct(provider: &RootProvider<Http<Client>>, block: Block) -> Result<BlockTransactionsDetails, Box<dyn Error>>
+    {
+        let returned_struct = BlockTransactionsDetails
+        {
+            block_number: block.header.number,
+            block_hash: block.header.hash,
+            transactions: Self::build_transactions_vec_from_block(provider, block).await?,                                
+        };
+
+        Ok(returned_struct) 
+    }
+    
+    pub async fn build_from_ident(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockTransactionsDetails, Box<dyn Error>>
+    {
+        let block_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
+
+        if let Some(block) = block_option
+        {
+            let returned_struct = BlockTransactionsDetails
+            {
+                block_number: block.header.number,
+                block_hash: block.header.hash,
+                transactions: Self::build_transactions_vec_from_block(provider, block).await?,                                
+            };
+
+            Ok(returned_struct)
+        }
+        else
+        {
+            Err("Block not found".into())
+        }
+    }
+
+    pub async fn build_from_block(provider: &RootProvider<Http<Client>>, block: Block) -> Result<BlockTransactionsDetails, Box<dyn Error>>
+    {
+        let returned_struct = BlockTransactionsDetails
+        {
+            block_number: block.header.number,
+            block_hash: block.header.hash,
+            transactions: Self::build_transactions_vec_from_block(provider, block).await?,                                
+        };
+
+        Ok(returned_struct)
+    }
+
+    pub async fn build_transactions_vec_from_block(provider: &RootProvider<Http<Client>>, block: Block) -> Result<Vec<TransactionDetails>, Box<dyn Error>>
+    {
+        let mut returned_vec: Vec<TransactionDetails> = Vec::new();
+        let mut returned_transaction_details: TransactionDetails;
+        let mut transaction_receipt_option: Option<TransactionReceipt>;
+        
+        if let BlockTransactions::Full(transactions) = block.transactions
+        {
+            for transaction in transactions
+            {
+                transaction_receipt_option = provider.get_transaction_receipt(transaction.tx_hash()).await?;
+
+                if let Some(transaction_receipt) = transaction_receipt_option
+                {
+                    returned_transaction_details = TransactionDetails::build(transaction, transaction_receipt);
+
+                    returned_vec.push(returned_transaction_details);
+                }
+            }
+        }
+        Ok(returned_vec) 
+    }
+    
     pub async fn build_transactions_vec_from_ident(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<Vec<TransactionDetails>, Box<dyn Error>>
     {
         let mut returned_vec: Vec<TransactionDetails> = Vec::new();
 
-        let block_data_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
+        let block_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
 
-        if let Some(block_data) = block_data_option
+        if let Some(block_data) = block_option
         {
             // let returned_transaction_details = TransactionDetails::build(block_data).await?;
             let mut returned_transaction_details: TransactionDetails;
@@ -307,7 +375,7 @@ pub async fn build_block_struct(provider: &RootProvider<Http<Client>>, ident: Bl
 
 {  
     // let parsed_block_number: BlockNumberOrTag = BlockNumberOrTag::Number(block_number);
-    let block_data_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
+    let block_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
 
     let block_data = block_data_option.unwrap();
 
