@@ -235,14 +235,16 @@ impl From<Transaction> for SubmissionDetails
 {
     fn from(transaction: Transaction) -> Self
     {
+        let (eip_type, to, value) = SubmissionDetails::get_eip_recipient_value_from_transaction(&transaction);
+        
         SubmissionDetails
         {
-            eip_type: SubmissionDetails::find_eip_type_from_transaction(&transaction),
+            eip_type,
             transaction_index: transaction.transaction_index,
             transaction_hash: transaction.tx_hash(),
             from: transaction.from,
-            to: SubmissionDetails::find_recipient_from_transaction(&transaction),
-            value: SubmissionDetails::find_value_from_transaction(&transaction),
+            to,
+            value,
             gas_price: TransactionResponse::gas_price(&transaction),
             input: transaction.input().clone(),
         }
@@ -251,7 +253,58 @@ impl From<Transaction> for SubmissionDetails
 
 impl SubmissionDetails
 {
+    pub fn get_eip_recipient_value_from_transaction(transaction: &Transaction) -> (EipType, TxKind, U256)
+    {
+        let (eip, to, val) = match &transaction.inner
+        {
+            TxEnvelope::Legacy(signed_transaction) => 
+            (EipType::Legacy,  signed_transaction.tx().to, signed_transaction.tx().value),
+
+            TxEnvelope::Eip2930(signed_transaction) => 
+            (EipType::Eip2930,  signed_transaction.tx().to, signed_transaction.tx().value),
+
+            TxEnvelope::Eip1559(signed_transaction) => 
+            (EipType::Eip1559,  signed_transaction.tx().to, signed_transaction.tx().value),
+
+            TxEnvelope::Eip4844(signed_transaction_variant) => 
+            {
+                match signed_transaction_variant.tx()
+                {
+                    tx_eip4844::TxEip4844Variant::TxEip4844(signed_transaction) => 
+                    (EipType::TxEip4844,  TxKind::from(signed_transaction.to), signed_transaction.value),
+
+                    tx_eip4844::TxEip4844Variant::TxEip4844WithSidecar(signed_transaction) => 
+                    (EipType::TxEip4844WithSidecar,  TxKind::from(signed_transaction.tx().to), signed_transaction.tx().value),                    
+
+                }
+            },
+            TxEnvelope::Eip7702(signed_transaction) => 
+            (EipType::Eip7702,  TxKind::from(signed_transaction.tx().to), signed_transaction.tx().value),
+
+        };
+
+        (eip, to, val)
+    }  
     
+    pub fn find_eip_type_from_transaction(transaction: &Transaction) -> EipType
+    {
+        match &transaction.inner
+        {
+            TxEnvelope::Legacy(_) => EipType::Legacy,
+            TxEnvelope::Eip2930(_) => EipType::Eip2930,
+            TxEnvelope::Eip1559(_) => EipType::Eip1559,
+            TxEnvelope::Eip4844(signed_transaction_variant) => 
+            {
+                match signed_transaction_variant.tx()
+                {
+                    tx_eip4844::TxEip4844Variant::TxEip4844(_) => EipType::TxEip4844,
+                    tx_eip4844::TxEip4844Variant::TxEip4844WithSidecar(_) => EipType::TxEip4844WithSidecar,
+                }
+            },
+            TxEnvelope::Eip7702(_) => EipType::Eip7702,
+        }
+    }
+
     
     pub fn find_recipient_from_transaction(transaction: &Transaction) -> TxKind
     {
