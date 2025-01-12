@@ -4,7 +4,7 @@ use alloy::
     {
         transaction::
         {
-            eip4844 as tx_eip4844, TxEnvelope
+            self, eip4844 as tx_eip4844, TxEnvelope
         }, BlockHeader, Transaction as ConsensusTransaction
     }, 
     eips::
@@ -115,52 +115,67 @@ impl From<Header> for BlockHeaderData
 }
 
 #[derive(Debug)]
-pub struct BlockTransactionsData
+pub struct BlockTransactionsDetails
 {
     block_number: u64,
     block_hash: B256,
-    transactions: Vec<TransactionData>,
+    transactions: Vec<TransactionDetails>,
 }
 
-impl BlockTransactionsData
+impl BlockTransactionsDetails
 {
-    pub async fn build_transaction_data_vec_from_ident(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<Vec<TransactionData>, Box<dyn Error>>
+    pub async fn build_transactions_vec_from_ident(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<Vec<TransactionDetails>, Box<dyn Error>>
     {
-        let mut returned_vec: Vec<TransactionData> = Vec::new();
+        let mut returned_vec: Vec<TransactionDetails> = Vec::new();
+
         let block_data_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
-        
+
         if let Some(block_data) = block_data_option
         {
+            // let returned_transaction_details = TransactionDetails::build(block_data).await?;
+            let mut returned_transaction_details: TransactionDetails;
+            let mut transaction_receipt_option: Option<TransactionReceipt>;
+            
             if let BlockTransactions::Full(transactions) = block_data.transactions
             {
                 for transaction in transactions
                 {
-                    returned_vec.push
-                    (
-                        TransactionData
-                        {
-                            transaction_index: todo!(),
-                            transaction_hash: todo!(),
-                            from: todo!(),
-                            to: todo!(),
-                            value: todo!(),
-                            gas_price: todo!(),
-                            gas_used: todo!(),
-                            input: todo!(),
-                            block_number: todo!(),
-                            block_hash: todo!(),
-                        }
-                    )
+                    transaction_receipt_option = provider.get_transaction_receipt(transaction.tx_hash()).await?;
+
+                    if let Some(transaction_receipt) = transaction_receipt_option
+                    {
+                        returned_transaction_details = TransactionDetails::build(transaction, transaction_receipt);
+
+                        returned_vec.push(returned_transaction_details);
+                    }
                 }
             }
         }
-        
         Ok(returned_vec)
     }
 }
 
 #[derive(Debug)]
-pub struct TransactionData
+pub struct TransactionDetails
+{
+    submission_details: SubmissionDetails,
+    outcome_details: OutcomeDetails,
+}
+
+impl TransactionDetails
+{
+    fn build(transaction: Transaction, transaction_receipt: TransactionReceipt) -> Self
+    {
+        TransactionDetails
+        {
+            submission_details: SubmissionDetails::from(transaction),
+            outcome_details: OutcomeDetails::from(transaction_receipt),
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct SubmissionDetails
 {
     transaction_index: Option<u64>,
     transaction_hash: B256,
@@ -168,33 +183,27 @@ pub struct TransactionData
     to: TxKind,
     value: U256,
     gas_price: Option<u128>,
-    gas_used: U256,
     input: Bytes,
-    block_number: Option<u64>,
-    block_hash: Option<B256>,
 }
 
-impl From<Transaction> for TransactionData
+impl From<Transaction> for SubmissionDetails
 {
     fn from(transaction: Transaction) -> Self
     {
-        TransactionData
+        SubmissionDetails
         {
             transaction_index: transaction.transaction_index,
             transaction_hash: transaction.tx_hash(),
             from: transaction.from,
-            to: TransactionData::find_recipient_from_transaction(&transaction),
-            value: TransactionData::find_value_from_transaction(&transaction),
+            to: SubmissionDetails::find_recipient_from_transaction(&transaction),
+            value: SubmissionDetails::find_value_from_transaction(&transaction),
             gas_price: TransactionResponse::gas_price(&transaction),
-            gas_used: <TransactionReceipt as alloy::network::ReceiptResponse>::gas_used(&transaction),
-            input: *transaction.input(),
-            block_number: transaction.block_number,
-            block_hash: transaction.block_hash,
+            input: transaction.input().clone(),
         }
     }
 }
 
-impl TransactionData
+impl SubmissionDetails
 {
     pub fn find_recipient_from_transaction(transaction: &Transaction) -> TxKind
     {
@@ -239,6 +248,27 @@ impl TransactionData
     }
 }
 
+#[derive(Debug)]
+pub struct OutcomeDetails
+{
+    gas_used: u64,
+    block_number: Option<u64>,
+    block_hash: Option<B256>,
+}
+
+impl From<TransactionReceipt> for OutcomeDetails
+{
+    fn from(transaction_receipt: TransactionReceipt) -> Self
+    {
+        OutcomeDetails
+        {
+            gas_used: transaction_receipt.gas_used,
+            block_number: transaction_receipt.block_number,
+            block_hash: transaction_receipt.block_hash,
+        }
+    }
+}
+    
 // impl From<&Transaction> for TransactionData
 // {
 //     fn from(transaction: &Transaction) -> Self
