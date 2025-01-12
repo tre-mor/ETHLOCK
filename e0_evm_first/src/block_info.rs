@@ -7,10 +7,7 @@ use alloy::
             self, eip4844 as tx_eip4844, TxEnvelope
         }, BlockHeader, Transaction as ConsensusTransaction
     }, 
-    eips::
-    {
-        eip4844, BlockNumberOrTag
-    }, 
+    eips::BlockNumberOrTag,
     network::TransactionResponse,
     primitives::
     {
@@ -24,7 +21,7 @@ use alloy::
     {
         error, Block, BlockTransactions, BlockTransactionsKind::Full, Header, Transaction, TransactionReceipt
     }, 
-    signers::k256::elliptic_curve::FieldBytesEncoding, transports::http::Http
+    transports::http::Http
 };
 use reqwest::Client;
 use std::error::Error;
@@ -117,9 +114,9 @@ impl From<Header> for BlockHeaderData
 #[derive(Debug)]
 pub struct BlockTransactionsDetails
 {
-    block_number: u64,
-    block_hash: B256,
-    transactions: Vec<TransactionDetails>,
+    pub block_number: u64,
+    pub block_hash: B256,
+    pub transactions: Vec<TransactionDetails>,
 }
 
 impl BlockTransactionsDetails
@@ -134,39 +131,6 @@ impl BlockTransactionsDetails
         };
 
         Ok(returned_struct) 
-    }
-    
-    pub async fn build_from_ident(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockTransactionsDetails, Box<dyn Error>>
-    {
-        let block_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
-
-        if let Some(block) = block_option
-        {
-            let returned_struct = BlockTransactionsDetails
-            {
-                block_number: block.header.number,
-                block_hash: block.header.hash,
-                transactions: Self::build_transactions_vec_from_block(provider, block).await?,                                
-            };
-
-            Ok(returned_struct)
-        }
-        else
-        {
-            Err("Block not found".into())
-        }
-    }
-
-    pub async fn build_from_block(provider: &RootProvider<Http<Client>>, block: Block) -> Result<BlockTransactionsDetails, Box<dyn Error>>
-    {
-        let returned_struct = BlockTransactionsDetails
-        {
-            block_number: block.header.number,
-            block_hash: block.header.hash,
-            transactions: Self::build_transactions_vec_from_block(provider, block).await?,                                
-        };
-
-        Ok(returned_struct)
     }
 
     pub async fn build_transactions_vec_from_block(provider: &RootProvider<Http<Client>>, block: Block) -> Result<Vec<TransactionDetails>, Box<dyn Error>>
@@ -243,8 +207,21 @@ impl TransactionDetails
 }
 
 #[derive(Debug)]
+pub enum EipType
+{
+    Legacy,
+    Eip2930,
+    Eip1559,
+    Eip4844,
+    TxEip4844,
+    TxEip4844WithSidecar,
+    Eip7702,
+}
+
+#[derive(Debug)]
 pub struct SubmissionDetails
 {
+    eip_type: EipType,
     transaction_index: Option<u64>,
     transaction_hash: B256,
     from: Address,
@@ -260,6 +237,7 @@ impl From<Transaction> for SubmissionDetails
     {
         SubmissionDetails
         {
+            eip_type: SubmissionDetails::find_eip_type_from_transaction(&transaction),
             transaction_index: transaction.transaction_index,
             transaction_hash: transaction.tx_hash(),
             from: transaction.from,
@@ -273,6 +251,8 @@ impl From<Transaction> for SubmissionDetails
 
 impl SubmissionDetails
 {
+    
+    
     pub fn find_recipient_from_transaction(transaction: &Transaction) -> TxKind
     {
         let returned_tx_kind: TxKind = match &transaction.inner
@@ -313,6 +293,11 @@ impl SubmissionDetails
         };
 
         returned_value
+    }
+
+    pub fn find_gas_price_from_transaction(transaction: &Transaction) -> Option<u128>
+    {
+        Some(0)
     }
 }
 
@@ -377,24 +362,24 @@ pub async fn build_block_struct(provider: &RootProvider<Http<Client>>, ident: Bl
     // let parsed_block_number: BlockNumberOrTag = BlockNumberOrTag::Number(block_number);
     let block_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
 
-    let block_data = block_data_option.unwrap();
+    let block = block_option.unwrap();
 
     let returned_struct = BlockStruct
     {
-        block_number: block_data.header.number,
-        hash: block_data.header.hash.0,
-        timestamp: block_data.header.timestamp,
-        parent_hash: block_data.header.parent_hash.0,
-        transactions: block_data.transactions.hashes().map(|tx| tx.0).collect(),
-        gas_used: block_data.header.gas_used,
-        gas_limit: block_data.header.gas_limit,
-        difficulty: block_data.header.difficulty,
-        nonce: block_data.header.nonce.into(),
-        miner: *block_data.header.beneficiary.0,
-        transaction_root: block_data.header.transactions_root.0,
-        state_root: block_data.header.state_root.0,
-        receipts_root: block_data.header.receipts_root.0,
-        logs_bloom: *block_data.header.logs_bloom.0,
+        block_number: block.header.number,
+        hash: block.header.hash.0,
+        timestamp: block.header.timestamp,
+        parent_hash: block.header.parent_hash.0,
+        transactions: block.transactions.hashes().map(|tx| tx.0).collect(),
+        gas_used: block.header.gas_used,
+        gas_limit: block.header.gas_limit,
+        difficulty: block.header.difficulty,
+        nonce: block.header.nonce.into(),
+        miner: *block.header.beneficiary.0,
+        transaction_root: block.header.transactions_root.0,
+        state_root: block.header.state_root.0,
+        receipts_root: block.header.receipts_root.0,
+        logs_bloom: *block.header.logs_bloom.0,
     };
 
     Ok(returned_struct)

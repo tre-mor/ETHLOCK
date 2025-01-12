@@ -1,7 +1,8 @@
 use alloy::{
-    eips::BlockNumberOrTag::{ Latest, Finalized, Safe, Earliest, Pending, Number },
+    eips::BlockNumberOrTag::{ Earliest, Finalized, Latest, Number, Pending, Safe },
     primitives::U256,
-    providers::ProviderBuilder,
+    providers::{Provider, ProviderBuilder},
+    rpc::types::BlockTransactionsKind::Full,
 };
 use block_info::view_block_header_data;
 // use block_info::get_latest_block_number;
@@ -13,8 +14,17 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>
     let rpc_url = "https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86".parse()?;
     let provider = ProviderBuilder::new().on_http(rpc_url);
 
-    let 
+    let block_option = provider.get_block_by_number(Latest, Full).await?;
 
+    if let Some(block) = block_option
+    {
+        let btxdet: block_info::BlockTransactionsDetails = block_info::BlockTransactionsDetails::build_struct(&provider, block).await?;
+
+        for transaction in btxdet.transactions
+        {
+            println!("{:#?}", transaction);
+        }
+    }
     
     // if let Ok(latest_block_number) = block_info::get_latest_block_number(&provider).await
     // {
