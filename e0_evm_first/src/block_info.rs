@@ -2,22 +2,29 @@ use alloy::
 {
     consensus::
     {
-        transaction, BlockHeader
-    },
-    eips::BlockNumberOrTag,
+        transaction::
+        {
+            eip4844 as tx_eip4844, TxEnvelope
+        }, BlockHeader, Transaction as ConsensusTransaction
+    }, 
+    eips::
+    {
+        eip4844, BlockNumberOrTag
+    }, 
+    network::TransactionResponse,
     primitives::
     {
-        Address, BlockHash, Bloom, Bytes, Sealable, B256, B64, U256,
-    },
+        Address, BlockHash, Bloom, Bytes, Sealable, TxKind, B256, B64, U256
+    }, 
     providers::
     {
         Provider, RootProvider
-    },
+    }, 
     rpc::types::
     {
-        Block, BlockTransactions, BlockTransactionsKind::Full, Header, Transaction
-    },
-    transports::http::Http,
+        Block, BlockTransactions, BlockTransactionsKind::Full, Header, Transaction, TransactionReceipt
+    }, 
+    signers::k256::elliptic_curve::FieldBytesEncoding, transports::http::Http
 };
 use reqwest::Client;
 use std::error::Error;
@@ -138,7 +145,7 @@ impl BlockTransactionsData
                             to: todo!(),
                             value: todo!(),
                             gas_price: todo!(),
-                            gas: todo!(),
+                            gas_used: todo!(),
                             input: todo!(),
                             block_number: todo!(),
                             block_hash: todo!(),
@@ -155,16 +162,81 @@ impl BlockTransactionsData
 #[derive(Debug)]
 pub struct TransactionData
 {
-    transaction_index: u64,
+    transaction_index: Option<u64>,
     transaction_hash: B256,
     from: Address,
-    to: Option<Address>,
+    to: TxKind,
     value: U256,
-    gas_price: U256,
-    gas: U256,
+    gas_price: Option<u128>,
+    gas_used: U256,
     input: Bytes,
-    block_number: u64,
-    block_hash: B256,
+    block_number: Option<u64>,
+    block_hash: Option<B256>,
+}
+
+impl From<Transaction> for TransactionData
+{
+    fn from(transaction: Transaction) -> Self
+    {
+        TransactionData
+        {
+            transaction_index: transaction.transaction_index,
+            transaction_hash: transaction.tx_hash(),
+            from: transaction.from,
+            to: TransactionData::find_recipient_from_transaction(&transaction),
+            value: TransactionData::find_value_from_transaction(&transaction),
+            gas_price: TransactionResponse::gas_price(&transaction),
+            gas_used: <TransactionReceipt as alloy::network::ReceiptResponse>::gas_used(&transaction),
+            input: *transaction.input(),
+            block_number: transaction.block_number,
+            block_hash: transaction.block_hash,
+        }
+    }
+}
+
+impl TransactionData
+{
+    pub fn find_recipient_from_transaction(transaction: &Transaction) -> TxKind
+    {
+        let returned_tx_kind: TxKind = match &transaction.inner
+        {
+            TxEnvelope::Legacy(signed_transaction) => signed_transaction.tx().to,
+            TxEnvelope::Eip2930(signed_transaction) => signed_transaction.tx().to,
+            TxEnvelope::Eip1559(signed_transaction) => signed_transaction.tx().to,
+            TxEnvelope::Eip4844(signed_transaction_variant) => 
+            {
+                match signed_transaction_variant.tx()
+                {
+                    tx_eip4844::TxEip4844Variant::TxEip4844(signed_transaction) => TxKind::from(signed_transaction.to),
+                    tx_eip4844::TxEip4844Variant::TxEip4844WithSidecar(signed_transaction) => TxKind::from(signed_transaction.tx().to),
+                }
+            },
+            TxEnvelope::Eip7702(signed_transaction) => TxKind::from(signed_transaction.tx().to),
+        };
+
+        returned_tx_kind
+    }
+
+    pub fn find_value_from_transaction(transaction: &Transaction) -> U256
+    {
+        let returned_value: U256 = match &transaction.inner
+        {
+            TxEnvelope::Legacy(signed_transaction) => signed_transaction.tx().value,
+            TxEnvelope::Eip2930(signed_transaction) => signed_transaction.tx().value,
+            TxEnvelope::Eip1559(signed_transaction) => signed_transaction.tx().value,
+            TxEnvelope::Eip4844(signed_transaction_variant) =>
+            {
+                match signed_transaction_variant.tx()
+                {
+                    tx_eip4844::TxEip4844Variant::TxEip4844(signed_transaction) => signed_transaction.value,
+                    tx_eip4844::TxEip4844Variant::TxEip4844WithSidecar(signed_transaction) => signed_transaction.tx().value,
+                }
+            },
+            TxEnvelope::Eip7702(signed_transaction) => signed_transaction.tx().value,
+        };
+
+        returned_value
+    }
 }
 
 // impl From<&Transaction> for TransactionData
