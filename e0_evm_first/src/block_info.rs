@@ -116,6 +116,8 @@ pub struct BlockTransactionsDetails
 {
     pub block_number: u64,
     pub block_hash: B256,
+    pub block_timestamp: u64,
+    pub base_fee_per_gas: Option<u64>,
     pub transactions: Vec<TransactionDetails>,
 }
 
@@ -127,27 +129,29 @@ impl BlockTransactionsDetails
         {
             block_number: block.header.number,
             block_hash: block.header.hash,
-            transactions: Self::build_transactions_vec_from_block(provider, block).await?,                                
+            block_timestamp: block.header.timestamp,
+            base_fee_per_gas: block.header.base_fee_per_gas,
+            transactions: Self::build_transactions_vec_from_block_ref(provider, &block).await?,
         };
 
         Ok(returned_struct) 
     }
 
-    pub async fn build_transactions_vec_from_block(provider: &RootProvider<Http<Client>>, block: Block) -> Result<Vec<TransactionDetails>, Box<dyn Error>>
+    pub async fn build_transactions_vec_from_block_ref(provider: &RootProvider<Http<Client>>, block: &Block) -> Result<Vec<TransactionDetails>, Box<dyn Error>>
     {
         let mut returned_vec: Vec<TransactionDetails> = Vec::new();
-        let mut returned_transaction_details: TransactionDetails;
-        let mut transaction_receipt_option: Option<TransactionReceipt>;
         
-        if let BlockTransactions::Full(transactions) = block.transactions
+        if let BlockTransactions::Full(transactions) = &block.transactions
         {
+            let base_fee_per_gas = block.header.base_fee_per_gas;
+
             for transaction in transactions
             {
-                transaction_receipt_option = provider.get_transaction_receipt(transaction.tx_hash()).await?;
+                let transaction_receipt_option: Option<TransactionReceipt> = provider.get_transaction_receipt(transaction.tx_hash()).await?;
 
                 if let Some(transaction_receipt) = transaction_receipt_option
                 {
-                    returned_transaction_details = TransactionDetails::build(transaction, transaction_receipt);
+                    let returned_transaction_details = TransactionDetails::build(transaction.clone(), transaction_receipt, base_fee_per_gas);
 
                     returned_vec.push(returned_transaction_details);
                 }
@@ -159,16 +163,14 @@ impl BlockTransactionsDetails
     pub async fn build_transactions_vec_from_ident(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<Vec<TransactionDetails>, Box<dyn Error>>
     {
         let mut returned_vec: Vec<TransactionDetails> = Vec::new();
-
-        let block_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
-
-        if let Some(block_data) = block_option
+        
+        if let Some(block) = provider.get_block_by_number(ident, Full).await?
         {
-            // let returned_transaction_details = TransactionDetails::build(block_data).await?;
             let mut returned_transaction_details: TransactionDetails;
             let mut transaction_receipt_option: Option<TransactionReceipt>;
+            let base_fee_per_gas = block.header.base_fee_per_gas;
             
-            if let BlockTransactions::Full(transactions) = block_data.transactions
+            if let BlockTransactions::Full(transactions) = block.transactions
             {
                 for transaction in transactions
                 {
@@ -176,7 +178,7 @@ impl BlockTransactionsDetails
 
                     if let Some(transaction_receipt) = transaction_receipt_option
                     {
-                        returned_transaction_details = TransactionDetails::build(transaction, transaction_receipt);
+                        returned_transaction_details = TransactionDetails::build(transaction, transaction_receipt, base_fee_per_gas);
 
                         returned_vec.push(returned_transaction_details);
                     }
@@ -202,7 +204,17 @@ impl TransactionDetails
         {
             if let Ok(Some(transaction_receipt)) = provider.get_transaction_receipt(transaction_hash).await
             {
-                Ok(TransactionDetails::build(transaction, transaction_receipt))
+                let mut base_fee_per_gas = None;
+
+                if let Some(block_hash) = transaction_receipt.block_hash
+                {
+                    if let Ok(Some(block)) = provider.get_block_by_hash(block_hash, Full).await
+                    {
+                        base_fee_per_gas = block.header.base_fee_per_gas;
+                    }
+                }
+
+                Ok(TransactionDetails::build(transaction, transaction_receipt, base_fee_per_gas))
             }
             else
             {
@@ -215,11 +227,11 @@ impl TransactionDetails
         }
     }
     
-    fn build(transaction: Transaction, transaction_receipt: TransactionReceipt) -> Self
+    fn build(transaction: Transaction, transaction_receipt: TransactionReceipt, base_fee_per_gas: Option<u64>) -> Self
     {
         TransactionDetails
         {
-            submission_details: SubmissionDetails::from(transaction),
+            submission_details: SubmissionDetails::build(transaction, base_fee_per_gas),
             outcome_details: OutcomeDetails::from(transaction_receipt),
         }
     }
@@ -228,21 +240,21 @@ impl TransactionDetails
     {
         println!                                   ("\n Transaction details:\n");
         println!                                   ("                  type: {:?}", self.submission_details.eip_type);
+        println!                                   ("      transaction hash: {:?}", self.submission_details.transaction_hash);
         match self.submission_details.transaction_index
         {
             Some(transaction_index)     => println!("     transaction index: {}", transaction_index),
             None                        => println!("     transaction index: no transaction index available"),
         }
-        println!                                   ("      transaction hash: {:?}", self.submission_details.transaction_hash);
         println!                                   ("                  from: {:?}", self.submission_details.from);
         println!                                   ("                    to: {:?}", self.submission_details.to);
         println!                                   ("                 value: {:?}", self.submission_details.value);
+        println!                                   ("                 input: {:?}", self.submission_details.input);
         match self.submission_details.gas_price
         {
             Some(gas_price)             => println!("             gas price: {}", gas_price),
             None                        => println!("             gas price: no gas price available"),
         }
-        println!                                   ("                 input: {:?}", self.submission_details.input);
         match self.outcome_details.effective_gas_price
         {
             Some(effective_gas_price)   => println!("   effective gas price: {}", effective_gas_price),
@@ -260,15 +272,6 @@ impl TransactionDetails
             Some(block_hash)            => println!("            block hash: {}", block_hash),
             None                        => println!("            block hash: no block hash available"),
         }
-        
-        // println!("\nTransaction details:\n");
-        // println!("                  type: {:?}", self.submission_details.eip_type);
-        // println!("     transaction index: {:?}", self.submission_details.transaction_index);
-        // println!("      transaction hash: {:?}", self.submission_details.transaction_hash);
-        // println!("                  from: {:?}", self.submission_details.from);
-        // println!("                    to: {:?}", self.submission_details.to);
-        // println!("            block hash: {:?}", self.outcome_details.block_hash);
-
         
         // println!("\nTransaction details:\n");
         // println!("                  type: {:?}", self.submission_details.eip_type);
@@ -297,23 +300,18 @@ pub enum EipType
     Eip7702,
 }
 
-pub enum GasPriceType
-{
-    GasPrice(u128),
-    
-}
-
 #[derive(Debug)]
 pub struct SubmissionDetails
 {
     eip_type: EipType,
-    transaction_index: Option<u64>,
     transaction_hash: B256,
+    transaction_index: Option<u64>,
     from: Address,
     to: TxKind,
     value: U256,
-    gas_price: Option<u128>,
     input: Bytes,
+    base_fee_per_gas: Option<u64>,
+    gas_price: Option<u128>,
 }
 
 impl From<Transaction> for SubmissionDetails
@@ -322,7 +320,7 @@ impl From<Transaction> for SubmissionDetails
     {
         let (eip_type, to, value) = SubmissionDetails::get_eip_recipient_value_from_transaction(&transaction);
         
-        SubmissionDetails
+         SubmissionDetails
         {
             eip_type,
             transaction_index: transaction.transaction_index,
@@ -330,14 +328,33 @@ impl From<Transaction> for SubmissionDetails
             from: transaction.from,
             to,
             value,
-            gas_price: TransactionResponse::gas_price(&transaction),
             input: transaction.input().clone(),
+            base_fee_per_gas: None,
+            gas_price: TransactionResponse::gas_price(&transaction),
         }
     }
 }
 
 impl SubmissionDetails
 {
+    pub fn build(transaction: Transaction, base_fee_per_gas: Option<u64>) -> Self
+    {
+        let (eip_type, to, value) = SubmissionDetails::get_eip_recipient_value_from_transaction(&transaction);
+        
+         SubmissionDetails
+        {
+            eip_type,
+            transaction_index: transaction.transaction_index,
+            transaction_hash: transaction.tx_hash(),
+            from: transaction.from,
+            to,
+            value,
+            input: transaction.input().clone(),
+            base_fee_per_gas,
+            gas_price: TransactionResponse::gas_price(&transaction),
+        }
+    }
+
     pub fn get_eip_recipient_value_from_transaction(transaction: &Transaction) -> (EipType, TxKind, U256)
     {
         let (eip, to, val) = match &transaction.inner
@@ -461,25 +478,6 @@ impl From<TransactionReceipt> for OutcomeDetails
         }
     }
 }
-    
-// impl From<&Transaction> for TransactionData
-// {
-//     fn from(transaction: &Transaction) -> Self
-//     {
-//         TransactionData
-//         {
-//             transaction_index: transaction.transaction_index,
-//             transaction_hash: transaction.hash,
-//             from: transaction.from,
-//             to: transaction.to,
-//             value: transaction.value,
-//             gas_price: transaction.gas_price,
-//             gas: transaction.gas,
-//             input: transaction.input.clone()
-//         }
-//     }
-// }
-
 
 pub async fn get_latest_block_number(provider: &RootProvider<Http<Client>>) -> Result<u64, Box<dyn Error>>
 {
