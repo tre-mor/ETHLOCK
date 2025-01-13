@@ -1,10 +1,12 @@
+use std::str::FromStr;
+
 use alloy::{
     eips::BlockNumberOrTag::{ Earliest, Finalized, Latest, Number, Pending, Safe },
-    primitives::U256,
+    primitives::{B256, U256},
     providers::{Provider, ProviderBuilder},
     rpc::types::BlockTransactionsKind::Full,
 };
-use block_info::view_block_header_data;
+use block_info::{view_block_header_data, TransactionDetails};
 // use block_info::get_latest_block_number;
 mod block_info;
 
@@ -14,16 +16,23 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>
     let rpc_url = "https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86".parse()?;
     let provider = ProviderBuilder::new().on_http(rpc_url);
 
-    let block_option = provider.get_block_by_number(Latest, Full).await?;
+    // let block_option = provider.get_block_by_number(Latest, Full).await?;
 
-    if let Some(block) = block_option
+    // if let Some(block) = block_option
+    // {
+    //     let btxdet: block_info::BlockTransactionsDetails = block_info::BlockTransactionsDetails::build_struct(&provider, block).await?;
+
+    //     for transaction in btxdet.transactions
+    //     {
+    //         transaction.print_details();
+    //     }
+    // }
+
+    let tx = TransactionDetails::get(&provider, B256::from_str("0x4a47971ee2e5e3cb56bc601f1475a51d2993a640faf63afbf1b08c58d00136b9").unwrap()).await;
+
+    if let Ok(tx) = tx
     {
-        let btxdet: block_info::BlockTransactionsDetails = block_info::BlockTransactionsDetails::build_struct(&provider, block).await?;
-
-        for transaction in btxdet.transactions
-        {
-            println!("{:#?}", transaction);
-        }
+        tx.print_details();
     }
     
     // if let Ok(latest_block_number) = block_info::get_latest_block_number(&provider).await

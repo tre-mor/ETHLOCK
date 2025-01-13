@@ -196,6 +196,25 @@ pub struct TransactionDetails
 
 impl TransactionDetails
 {
+    pub async fn get(provider: &RootProvider<Http<Client>>, transaction_hash: B256) -> Result<TransactionDetails, Box<dyn Error>>
+    {
+        if let Ok(Some(transaction)) = provider.get_transaction_by_hash(transaction_hash).await
+        {
+            if let Ok(Some(transaction_receipt)) = provider.get_transaction_receipt(transaction_hash).await
+            {
+                Ok(TransactionDetails::build(transaction, transaction_receipt))
+            }
+            else
+            {
+                Err("Transaction receipt not found".into())
+            }
+        }
+        else
+        {
+            Err("Transaction not found".into())
+        }
+    }
+    
     fn build(transaction: Transaction, transaction_receipt: TransactionReceipt) -> Self
     {
         TransactionDetails
@@ -203,6 +222,67 @@ impl TransactionDetails
             submission_details: SubmissionDetails::from(transaction),
             outcome_details: OutcomeDetails::from(transaction_receipt),
         }
+    }
+
+    pub fn print_details(&self)
+    {
+        println!                                   ("\n Transaction details:\n");
+        println!                                   ("                  type: {:?}", self.submission_details.eip_type);
+        match self.submission_details.transaction_index
+        {
+            Some(transaction_index)     => println!("     transaction index: {}", transaction_index),
+            None                        => println!("     transaction index: no transaction index available"),
+        }
+        println!                                   ("      transaction hash: {:?}", self.submission_details.transaction_hash);
+        println!                                   ("                  from: {:?}", self.submission_details.from);
+        println!                                   ("                    to: {:?}", self.submission_details.to);
+        println!                                   ("                 value: {:?}", self.submission_details.value);
+        match self.submission_details.gas_price
+        {
+            Some(gas_price)             => println!("             gas price: {}", gas_price),
+            None                        => println!("             gas price: no gas price available"),
+        }
+        println!                                   ("                 input: {:?}", self.submission_details.input);
+        match self.outcome_details.effective_gas_price
+        {
+            Some(effective_gas_price)   => println!("   effective gas price: {}", effective_gas_price),
+            None                        => println!("   effective gas price: no effective gas price available"),
+            
+        }
+        println!                                   ("              gas used: {:?}", self.outcome_details.gas_used);
+        match self.outcome_details.block_number
+        {
+            Some(block_number)          => println!("          block number: {}", block_number),
+            None                        => println!("          block number: no block number available"),
+        }
+        match self.outcome_details.block_hash
+        {
+            Some(block_hash)            => println!("            block hash: {}", block_hash),
+            None                        => println!("            block hash: no block hash available"),
+        }
+        
+        // println!("\nTransaction details:\n");
+        // println!("                  type: {:?}", self.submission_details.eip_type);
+        // println!("     transaction index: {:?}", self.submission_details.transaction_index);
+        // println!("      transaction hash: {:?}", self.submission_details.transaction_hash);
+        // println!("                  from: {:?}", self.submission_details.from);
+        // println!("                    to: {:?}", self.submission_details.to);
+        // println!("            block hash: {:?}", self.outcome_details.block_hash);
+
+        
+        // println!("\nTransaction details:\n");
+        // println!("                  type: {:?}", self.submission_details.eip_type);
+        // println!("     transaction index: {:?}", self.submission_details.transaction_index);
+        // println!("      transaction hash: {:?}", self.submission_details.transaction_hash);
+        // println!("                  from: {:?}", self.submission_details.from);
+        // println!("                    to: {:?}", self.submission_details.to);
+        // println!("                 value: {:?}", self.submission_details.value);
+        // println!("             gas price: {:?}", self.submission_details.gas_price);
+        // println!("                 input: {:?}", self.submission_details.input);
+        // println!("   effective gas price: {:?}", self.outcome_details.effective_gas_price);
+        // println!("              gas used: {:?}", self.outcome_details.gas_used);
+        // println!("          block number: {:?}", self.outcome_details.block_number);
+        // println!("            block hash: {:?}", self.outcome_details.block_hash);
     }
 }
 
@@ -213,9 +293,14 @@ pub enum EipType
     Eip2930,
     Eip1559,
     Eip4844,
-    TxEip4844,
-    TxEip4844WithSidecar,
+    Eip4844WithSidecar,
     Eip7702,
+}
+
+pub enum GasPriceType
+{
+    GasPrice(u128),
+    
 }
 
 #[derive(Debug)]
@@ -271,10 +356,10 @@ impl SubmissionDetails
                 match signed_transaction_variant.tx()
                 {
                     tx_eip4844::TxEip4844Variant::TxEip4844(signed_transaction) => 
-                    (EipType::TxEip4844,  TxKind::from(signed_transaction.to), signed_transaction.value),
+                    (EipType::Eip4844,  TxKind::from(signed_transaction.to), signed_transaction.value),
 
                     tx_eip4844::TxEip4844Variant::TxEip4844WithSidecar(signed_transaction) => 
-                    (EipType::TxEip4844WithSidecar,  TxKind::from(signed_transaction.tx().to), signed_transaction.tx().value),                    
+                    (EipType::Eip4844WithSidecar,  TxKind::from(signed_transaction.tx().to), signed_transaction.tx().value),                    
 
                 }
             },
@@ -297,8 +382,8 @@ impl SubmissionDetails
             {
                 match signed_transaction_variant.tx()
                 {
-                    tx_eip4844::TxEip4844Variant::TxEip4844(_) => EipType::TxEip4844,
-                    tx_eip4844::TxEip4844Variant::TxEip4844WithSidecar(_) => EipType::TxEip4844WithSidecar,
+                    tx_eip4844::TxEip4844Variant::TxEip4844(_) => EipType::Eip4844,
+                    tx_eip4844::TxEip4844Variant::TxEip4844WithSidecar(_) => EipType::Eip4844WithSidecar,
                 }
             },
             TxEnvelope::Eip7702(_) => EipType::Eip7702,
@@ -357,6 +442,7 @@ impl SubmissionDetails
 #[derive(Debug)]
 pub struct OutcomeDetails
 {
+    effective_gas_price: Option<u128>,
     gas_used: u64,
     block_number: Option<u64>,
     block_hash: Option<B256>,
@@ -368,6 +454,7 @@ impl From<TransactionReceipt> for OutcomeDetails
     {
         OutcomeDetails
         {
+            effective_gas_price: Some(transaction_receipt.effective_gas_price),
             gas_used: transaction_receipt.gas_used,
             block_number: transaction_receipt.block_number,
             block_hash: transaction_receipt.block_hash,
