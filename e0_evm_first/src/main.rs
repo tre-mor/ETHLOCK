@@ -1,15 +1,8 @@
-use std::str::FromStr;
-
-use alloy::eips::BlockNumberOrTag::{Earliest, Finalized, Latest, Number, Pending, Safe};
-use alloy::primitives::{B256, U256};
-use alloy::providers::{Provider, ProviderBuilder};
-use alloy::rpc::types::BlockTransactionsKind::Full;
-use block_info::{view_block_header_data, TransactionDetails};
-// use block_info::get_latest_block_number;
-
 mod block_info;
 mod provider_info;
 mod transaction_info;
+
+use std::str::FromStr;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>>
@@ -33,7 +26,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>
     //     }
     // }
 
-    let tx = TransactionDetails::get(&provider, B256::from_str("0x291351476ef62e83ed33fb385f998232b8577bd1af60eb3463ce5a9e77fc8666").unwrap()).await;
+    let tx = 
+        transaction_info::TransactionDetails::get
+        (
+            &provider, alloy::primitives::B256::from_str("0x291351476ef62e83ed33fb385f998232b8577bd1af60eb3463ce5a9e77fc8666"
+        ).unwrap()).await;
 
     if let Ok(tx) = tx
     {
