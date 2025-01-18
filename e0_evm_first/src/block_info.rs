@@ -425,7 +425,6 @@ pub struct SubmissionDetails
 }
 
 /* 
-C:\Program Files (x86)\VMware\VMware Player\bin\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Program Files\Rust stable MSVC 1.70\bin;C:\Program Files\dotnet\;C:\Program Files\Calibre2\;C:\Program Files\nodejs\;C:\Program Files\WindowsPowerShell\Scripts;C:\Program Files\PowerShell\7\;C:\Program Files\Docker\Docker\resources\bin;C:\Users\ianka\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\ianka\AppData\Local\Programs\Python\Python313\;C:\Users\ianka\AppData\Local\Programs\Python\Python311\Scripts\;C:\Users\ianka\AppData\Local\Programs\Python\Python311\;C:\Users\ianka\.cargo\bin;C:\Users\ianka\AppData\Local\Microsoft\WindowsApps;C:\Users\ianka\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\ianka\AppData\Local\GitHubDesktop\bin;C:\Users\ianka\AppData\Roaming\npm;C:\Users\ianka\AppData\Local\Programs\Ollama;c:\users\ianka\.local\bin;c:\users\ianka\appdata\roaming\python\python312\scripts;C:\gtk-build\gtk\x64\release\bin;C:\Users\ianka\AppData\Local\Microsoft\WinGet\Links;C:\Exercism
  */
 
 impl SubmissionDetails
