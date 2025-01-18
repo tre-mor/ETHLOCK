@@ -330,70 +330,7 @@ block_hash: transaction_receipt.block_hash,
 | **gas_limit**                | ✅ Present | ✅ Present  | ✅ Present   | ✅ Present   | ✅ Present               | ✅ Present   |
 | **max_fee_per_gas**          | ❌ N/A     | ❌ N/A      | ✅ Present   | ✅ Present   | ✅ Present               | ✅ Present   |
 | **max_priority_fee_per_gas** | ❌ N/A     | ❌ N/A      | ✅ Present   | ✅ Present   | ✅ Present               | ✅ Present   |
-| **base_fee_per_gas**         | ❌ N/A     | ❌ N/A      | ✅ Present   | ✅ Present   | ✅ Present               | ✅ Present   |
- */
-
-    
-    pub fn print_details(&self)
-    {
-        match self.submission_details.eip_type
-        {
-            EipType::Legacy => todo!(),
-            EipType::Eip2930 => todo!(),
-            EipType::Eip1559 => todo!(),
-            EipType::Eip4844 => todo!(),
-            EipType::Eip4844WithSidecar => todo!(),
-            EipType::Eip7702 => todo!(),
-        }
-        println!                                   ("\n Transaction details:\n");
-        println!                                   ("                  type: {:?}", self.submission_details.eip_type);
-        println!                                   ("      transaction hash: {:?}", self.submission_details.transaction_hash);
-        match self.submission_details.transaction_index
-        {
-            Some(transaction_index)     => println!("     transaction index: {}", transaction_index),
-            None                        => println!("     transaction index: no transaction index available"),
-        }
-        println!                                   ("                  from: {:?}", self.submission_details.from);
-        println!                                   ("                    to: {:?}", self.submission_details.to);
-        println!                                   ("                 value: {:?}", self.submission_details.value);
-        println!                                   ("                 input: {:?}", self.submission_details.input);
-        match self.submission_details.gas_price
-        {
-            Some(gas_price)             => println!("             gas price: {}", gas_price),
-            None                        => println!("             gas price: no gas price available"),
-        }
-        match self.outcome_details.effective_gas_price
-        {
-            Some(effective_gas_price)   => println!("   effective gas price: {}", effective_gas_price),
-            None                        => println!("   effective gas price: no effective gas price available"),
-            
-        }
-        println!                                   ("              gas used: {:?}", self.outcome_details.gas_used);
-        match self.outcome_details.block_number
-        {
-            Some(block_number)          => println!("          block number: {}", block_number),
-            None                        => println!("          block number: no block number available"),
-        }
-        match self.outcome_details.block_hash
-        {
-            Some(block_hash)            => println!("            block hash: {}", block_hash),
-            None                        => println!("            block hash: no block hash available"),
-        }
-        
-        // println!("\nTransaction details:\n");
-        // println!("                  type: {:?}", self.submission_details.eip_type);
-        // println!("     transaction index: {:?}", self.submission_details.transaction_index);
-        // println!("      transaction hash: {:?}", self.submission_details.transaction_hash);
-        // println!("                  from: {:?}", self.submission_details.from);
-        // println!("                    to: {:?}", self.submission_details.to);
-        // println!("                 value: {:?}", self.submission_details.value);
-        // println!("             gas price: {:?}", self.submission_details.gas_price);
-        // println!("                 input: {:?}", self.submission_details.input);
-        // println!("   effective gas price: {:?}", self.outcome_details.effective_gas_price);
-        // println!("              gas used: {:?}", self.outcome_details.gas_used);
-        // println!("          block number: {:?}", self.outcome_details.block_number);
-        // println!("            block hash: {:?}", self.outcome_details.block_hash);
-    }
+| **base_fee_per_gas**         | ❌ N/A     | ❌ N/A      | ✅ Present   | ✅ Present   | ✅ Present               | ✅ Present   | */
 }
 
 #[derive(Debug)]
@@ -423,9 +360,6 @@ pub struct SubmissionDetails
     max_priority_fee_per_gas: Option<u128>,
     base_fee_per_gas: Option<u64>,
 }
-
-/* 
- */
 
 impl SubmissionDetails
 {
@@ -544,11 +478,6 @@ impl SubmissionDetails
 
         returned_value
     }
-
-    pub fn find_gas_price_from_transaction(transaction: &Transaction) -> Option<u128>
-    {
-        Some(0)
-    }
 }
 
 #[derive(Debug)]
@@ -592,7 +521,6 @@ pub async fn get_latest_n_block_numbers(latest_block_number: u64, n: u64) -> Res
 pub async fn build_block_struct(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockStruct, Box<dyn Error>>
 
 {  
-    // let parsed_block_number: BlockNumberOrTag = BlockNumberOrTag::Number(block_number);
     let block_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
 
     let block = block_option.unwrap();
@@ -651,5 +579,3 @@ pub async fn view_block_header_data(provider: &RootProvider<Http<Client>>, ident
         Err("Block not found!".into())
     }
 }
-
-// pub async fn view_block_transactions_data(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockTransactionsData, Box<dyn Error>>
