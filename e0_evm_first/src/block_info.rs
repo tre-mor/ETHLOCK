@@ -424,29 +424,9 @@ pub struct SubmissionDetails
     base_fee_per_gas: Option<u64>,
 }
 
-// impl From<Transaction> for SubmissionDetails
-// {
-//     fn from(transaction: Transaction) -> Self
-//     {
-//         let (eip_type, to, value) = SubmissionDetails::fill_fields_from_transaction(&transaction);
-        
-//          SubmissionDetails
-//         {
-//             eip_type,
-//             transaction_index: transaction.transaction_index,
-//             transaction_hash: transaction.tx_hash(),
-//             from: transaction.from,
-//             to,
-//             value,
-//             input: transaction.input().clone(),
-//             gas_price: TransactionResponse::gas_price(&transaction),
-//             gas_limit: todo!(),
-//             max_fee_per_gas: todo!(),
-//             max_priority_fee_per_gas: todo!(),
-//             base_fee_per_gas: None,
-//         }
-//     }
-// }
+/* 
+C:\Program Files (x86)\VMware\VMware Player\bin\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\ProgramData\chocolatey\bin;C:\Program Files\Git\cmd;C:\Program Files\Rust stable MSVC 1.70\bin;C:\Program Files\dotnet\;C:\Program Files\Calibre2\;C:\Program Files\nodejs\;C:\Program Files\WindowsPowerShell\Scripts;C:\Program Files\PowerShell\7\;C:\Program Files\Docker\Docker\resources\bin;C:\Users\ianka\AppData\Local\Programs\Python\Python313\Scripts\;C:\Users\ianka\AppData\Local\Programs\Python\Python313\;C:\Users\ianka\AppData\Local\Programs\Python\Python311\Scripts\;C:\Users\ianka\AppData\Local\Programs\Python\Python311\;C:\Users\ianka\.cargo\bin;C:\Users\ianka\AppData\Local\Microsoft\WindowsApps;C:\Users\ianka\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\ianka\AppData\Local\GitHubDesktop\bin;C:\Users\ianka\AppData\Roaming\npm;C:\Users\ianka\AppData\Local\Programs\Ollama;c:\users\ianka\.local\bin;c:\users\ianka\appdata\roaming\python\python312\scripts;C:\gtk-build\gtk\x64\release\bin;C:\Users\ianka\AppData\Local\Microsoft\WinGet\Links;C:\Exercism
+ */
 
 impl SubmissionDetails
 {
@@ -641,11 +621,6 @@ pub async fn build_block_struct(provider: &RootProvider<Http<Client>>, ident: Bl
 
 pub async fn build_block_struct_simple(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockStructSimple, Box<dyn Error>>
 {
-    // let parsed_block_number: BlockNumberOrTag = BlockNumberOrTag::Number(block_number);
-    // let parsed_block_number: BlockNumberOrTag = BlockNumberOrTag::Latest;
-
-    // println!("parsed number {}", parsed_block_number);
-
     let block_data_option = provider.get_block_by_number(ident, Full).await?;
     
     let block_data = block_data_option.unwrap();
