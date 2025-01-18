@@ -1,6 +1,8 @@
 use std::str::FromStr;
 
-use alloy::{
+use 
+alloy::
+{
     eips::BlockNumberOrTag::{ Earliest, Finalized, Latest, Number, Pending, Safe },
     primitives::{B256, U256},
     providers::{Provider, ProviderBuilder},
@@ -28,11 +30,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>
     //     }
     // }
 
-    let tx = TransactionDetails::get(&provider, B256::from_str("0x4a47971ee2e5e3cb56bc601f1475a51d2993a640faf63afbf1b08c58d00136b9").unwrap()).await;
+    let tx = TransactionDetails::get(&provider, B256::from_str("0x291351476ef62e83ed33fb385f998232b8577bd1af60eb3463ce5a9e77fc8666").unwrap()).await;
 
     if let Ok(tx) = tx
     {
-        tx.print_details();
+        tx.print_transaction_details();
     }
     
     // if let Ok(latest_block_number) = block_info::get_latest_block_number(&provider).await

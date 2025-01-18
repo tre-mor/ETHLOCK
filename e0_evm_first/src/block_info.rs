@@ -8,7 +8,7 @@ use alloy::
         }, BlockHeader, Transaction as ConsensusTransaction
     }, 
     eips::BlockNumberOrTag,
-    network::TransactionResponse,
+    // network::TransactionResponse,
     primitives::
     {
         Address, BlockHash, Bloom, Bytes, Sealable, TxKind, B256, B64, U256
@@ -147,7 +147,7 @@ impl BlockTransactionsDetails
 
             for transaction in transactions
             {
-                let transaction_receipt_option: Option<TransactionReceipt> = provider.get_transaction_receipt(transaction.tx_hash()).await?;
+                let transaction_receipt_option: Option<TransactionReceipt> = provider.get_transaction_receipt(*transaction.inner.tx_hash()).await?;
 
                 if let Some(transaction_receipt) = transaction_receipt_option
                 {
@@ -174,7 +174,7 @@ impl BlockTransactionsDetails
             {
                 for transaction in transactions
                 {
-                    transaction_receipt_option = provider.get_transaction_receipt(transaction.tx_hash()).await?;
+                    transaction_receipt_option = provider.get_transaction_receipt(*transaction.inner.tx_hash()).await?;
 
                     if let Some(transaction_receipt) = transaction_receipt_option
                     {
@@ -236,8 +236,115 @@ impl TransactionDetails
         }
     }
 
+    pub fn print_transaction_details(&self)
+    {
+        match self.submission_details.eip_type
+        {
+            EipType::Legacy => self.print_legacy_transaction_details(),
+            EipType::Eip2930 => self.print_legacy_transaction_details(),
+            EipType::Eip1559 => self.print_post_1559_transaction_details(),
+            EipType::Eip4844 => self.print_post_1559_transaction_details(),
+            EipType::Eip4844WithSidecar => self.print_post_1559_transaction_details(),
+            EipType::Eip7702 => self.print_post_1559_transaction_details(),
+        }
+    }
+
+    fn print_legacy_transaction_details(&self)
+    {
+        let to_field = match self.submission_details.to
+        {
+            TxKind::Create => "contract created in this transaction",
+            TxKind::Call(address) => &format!("{address}"),
+        };
+        
+        println!("\n   Transaction details:\n");
+        println!("                     EIP: {:?}", self.submission_details.eip_type);
+        println!("       transaction index: {}", self.submission_details.transaction_index.expect("failed to retrieve transaction index"));
+        println!("        transaction hash: {}", self.submission_details.transaction_hash);
+        println!("                    from: {}", self.submission_details.from);
+        println!("                      to: {}", to_field);
+        println!("                   value: {}", self.submission_details.value);
+        println!("                   input: {}", self.submission_details.input);
+        println!("               gas price: {}", self.submission_details.gas_price.expect("failed to retrieve gas price"));
+        println!("               gas limit: {}", self.submission_details.gas_limit);
+        // println!("         max fee per gas: {}", self.submission_details.max_fee_per_gas);
+        // println!("max priority fee per gas: {}", self.submission_details.max_priority_fee_per_gas);
+        // println!("        base fee per gas: {}", self.submission_details.base_fee_per_gas);
+        // println!("     effective gas price: {}", self.outcome_details.effective_gas_price);
+        println!("                gas used: {}", self.outcome_details.gas_used);
+        println!("            block number: {}", self.outcome_details.block_number.expect("failed to retrieve block number"));
+        println!("              block hash: {}", self.outcome_details.block_hash.expect("failed to retrieve block hash"));        
+    }
+
+    fn print_post_1559_transaction_details(&self)
+    {
+        let to_field = match self.submission_details.to
+        {
+            TxKind::Create => "contract created in this transaction",
+            TxKind::Call(address) => &format!("{address}"),
+        };
+
+        println!("\n   Transaction details:\n");
+        println!("                     EIP: {:?}", self.submission_details.eip_type);
+        println!("       transaction index: {:?}", self.submission_details.transaction_index.expect("failed to retrieve transaction index"));
+        println!("        transaction hash: {:?}", self.submission_details.transaction_hash);
+        println!("                    from: {:?}", self.submission_details.from);
+        println!("                      to: {:?}", to_field);
+        println!("                   value: {:?}", self.submission_details.value);
+        println!("                   input: {:?}", self.submission_details.input);
+        // println!("               gas price: {:?}", self.submission_details.gas_price.expect("failed to retrieve gas price"));
+        println!("               gas limit: {:?}", self.submission_details.gas_limit);
+        println!("         max fee per gas: {:?}", self.submission_details.max_fee_per_gas);
+        println!("max priority fee per gas: {:?}", self.submission_details.max_priority_fee_per_gas.expect("failed to retrieve pax priority fee per gas"));
+        println!("        base fee per gas: {:?}", self.submission_details.base_fee_per_gas.expect("failed to retrieve base fee per gas"));
+        println!("     effective gas price: {:?}", self.outcome_details.effective_gas_price.expect("failed to retrieve effective gas price"));
+        println!("                gas used: {:?}", self.outcome_details.gas_used);
+        println!("            block number: {:?}", self.outcome_details.block_number.expect("failed to retrieve block number"));
+        println!("              block hash: {:?}", self.outcome_details.block_hash.expect("failed to retrieve block hash"));        
+    }
+
+/* 
+eip_type,
+transaction_index: transaction.transaction_index,
+transaction_hash: *transaction.inner.tx_hash(),
+from: transaction.from,
+to,
+value,
+input: transaction.input().clone(),
+gas_price: transaction.gas_price(),
+gas_limit: transaction.gas_limit(),
+max_fee_per_gas: transaction.max_fee_per_gas(),
+max_priority_fee_per_gas: transaction.max_priority_fee_per_gas(),
+base_fee_per_gas,
+
+effective_gas_price: Some(transaction_receipt.effective_gas_price),
+gas_used: transaction_receipt.gas_used,
+block_number: transaction_receipt.block_number,
+block_hash: transaction_receipt.block_hash,
+
+| **Gas Field**                | **Legacy** | **EIP-2930** | **EIP-1559** | **EIP-4844** | **EIP-4844 With Sidecar** | **EIP-7702** |
+|------------------------------|------------|--------------|--------------|--------------|---------------------------|--------------|
+| **gas_used**                 | ✅ Present | ✅ Present  | ✅ Present   | ✅ Present   | ✅ Present               | ✅ Present   |
+| **effective_gas_price**      | ❌ N/A     | ❌ N/A      | ✅ Present   | ✅ Present   | ✅ Present               | ✅ Present   |
+| **gas_price**                | ✅ Present | ✅ Present  | ❌ Obsolete  | ❌ Obsolete  | ❌ Obsolete              | ❌ Obsolete  |
+| **gas_limit**                | ✅ Present | ✅ Present  | ✅ Present   | ✅ Present   | ✅ Present               | ✅ Present   |
+| **max_fee_per_gas**          | ❌ N/A     | ❌ N/A      | ✅ Present   | ✅ Present   | ✅ Present               | ✅ Present   |
+| **max_priority_fee_per_gas** | ❌ N/A     | ❌ N/A      | ✅ Present   | ✅ Present   | ✅ Present               | ✅ Present   |
+| **base_fee_per_gas**         | ❌ N/A     | ❌ N/A      | ✅ Present   | ✅ Present   | ✅ Present               | ✅ Present   |
+ */
+
+    
     pub fn print_details(&self)
     {
+        match self.submission_details.eip_type
+        {
+            EipType::Legacy => todo!(),
+            EipType::Eip2930 => todo!(),
+            EipType::Eip1559 => todo!(),
+            EipType::Eip4844 => todo!(),
+            EipType::Eip4844WithSidecar => todo!(),
+            EipType::Eip7702 => todo!(),
+        }
         println!                                   ("\n Transaction details:\n");
         println!                                   ("                  type: {:?}", self.submission_details.eip_type);
         println!                                   ("      transaction hash: {:?}", self.submission_details.transaction_hash);
@@ -310,52 +417,61 @@ pub struct SubmissionDetails
     to: TxKind,
     value: U256,
     input: Bytes,
-    base_fee_per_gas: Option<u64>,
     gas_price: Option<u128>,
+    gas_limit: u64,
+    max_fee_per_gas: u128,
+    max_priority_fee_per_gas: Option<u128>,
+    base_fee_per_gas: Option<u64>,
 }
 
-impl From<Transaction> for SubmissionDetails
-{
-    fn from(transaction: Transaction) -> Self
-    {
-        let (eip_type, to, value) = SubmissionDetails::get_eip_recipient_value_from_transaction(&transaction);
+// impl From<Transaction> for SubmissionDetails
+// {
+//     fn from(transaction: Transaction) -> Self
+//     {
+//         let (eip_type, to, value) = SubmissionDetails::fill_fields_from_transaction(&transaction);
         
-         SubmissionDetails
-        {
-            eip_type,
-            transaction_index: transaction.transaction_index,
-            transaction_hash: transaction.tx_hash(),
-            from: transaction.from,
-            to,
-            value,
-            input: transaction.input().clone(),
-            base_fee_per_gas: None,
-            gas_price: TransactionResponse::gas_price(&transaction),
-        }
-    }
-}
+//          SubmissionDetails
+//         {
+//             eip_type,
+//             transaction_index: transaction.transaction_index,
+//             transaction_hash: transaction.tx_hash(),
+//             from: transaction.from,
+//             to,
+//             value,
+//             input: transaction.input().clone(),
+//             gas_price: TransactionResponse::gas_price(&transaction),
+//             gas_limit: todo!(),
+//             max_fee_per_gas: todo!(),
+//             max_priority_fee_per_gas: todo!(),
+//             base_fee_per_gas: None,
+//         }
+//     }
+// }
 
 impl SubmissionDetails
 {
     pub fn build(transaction: Transaction, base_fee_per_gas: Option<u64>) -> Self
     {
-        let (eip_type, to, value) = SubmissionDetails::get_eip_recipient_value_from_transaction(&transaction);
+        let (eip_type, to, value) = SubmissionDetails::fill_fields_from_transaction(&transaction);
         
          SubmissionDetails
         {
             eip_type,
             transaction_index: transaction.transaction_index,
-            transaction_hash: transaction.tx_hash(),
+            transaction_hash: *transaction.inner.tx_hash(),
             from: transaction.from,
             to,
             value,
             input: transaction.input().clone(),
+            gas_price: transaction.gas_price(),
+            gas_limit: transaction.gas_limit(),
+            max_fee_per_gas: transaction.max_fee_per_gas(),
+            max_priority_fee_per_gas: transaction.max_priority_fee_per_gas(),
             base_fee_per_gas,
-            gas_price: TransactionResponse::gas_price(&transaction),
         }
     }
 
-    pub fn get_eip_recipient_value_from_transaction(transaction: &Transaction) -> (EipType, TxKind, U256)
+    pub fn fill_fields_from_transaction(transaction: &Transaction) -> (EipType, TxKind, U256)
     {
         let (eip, to, val) = match &transaction.inner
         {
