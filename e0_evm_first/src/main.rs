@@ -1,3 +1,4 @@
+mod keys;
 mod block_info;
 mod provider_info;
 mod transaction_info;
@@ -11,7 +12,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>
     //     "https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86".parse()?;
     // let provider = ProviderBuilder::new().on_http(rpc_url);
 
-    let provider = provider_info::build_provider_from_url("https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86").await?;
+    let provider = provider_info::build_provider_from_url("https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86")?;
     
     // let block_option = provider.get_block_by_number(Latest, Full).await?;
 

@@ -1,0 +1,110 @@
+# EVM Blockchain Explorer and Wallet Project Rules
+
+## Documentation
+**reference https://github.com/alloy-rs/alloy/tree/main/crates for any and all functionality**
+
+## Project Overview
+EVM-compatible blockchain explorer and wallet implementation using Rust and the alloy crate ecosystem.
+
+## Core Functionalities
+
+### 1. Block Explorer Features
+- Block data comparison and analysis
+  - Compare block timestamps, gas usage, and transaction counts
+  - Track block propagation times
+  - Monitor uncle/orphan blocks
+- Transaction tracking
+  - User transaction history
+  - Pending transaction monitoring
+  - Gas price analysis
+  - Transaction receipt verification
+- Smart contract interactions
+  - Contract creation events
+  - Method calls and events
+  - Token transfers
+
+### 2. Wallet Features
+- Key Management
+  - Secure key generation
+  - Key import/export
+  - Multiple account support
+- Balance Operations
+  - ETH balance checking
+  - Transaction history
+  - Gas estimation
+- Transaction Operations
+  - Send/receive ETH
+  - Transaction signing
+  - Nonce management
+  - Custom gas settings
+
+## Implementation Roadmap
+
+### Phase 1: Foundation (Weeks 1-4)
+1. Block Explorer Core
+   - Basic block data retrieval
+   - Block comparison functionality
+   - Transaction list viewing
+2. Wallet Basics
+   - Key generation and storage
+   - Balance checking
+   - Basic ETH transfers
+
+### Phase 2: Enhanced Features (Weeks 5-8)
+1. Advanced Explorer Features
+   - Transaction history indexing
+   - Gas analytics
+   - Smart contract event tracking
+2. Wallet Improvements
+   - Multiple account management
+   - Advanced transaction options
+   - Address book
+
+### Phase 3: Analytics & Security (Weeks 9-12)
+1. Explorer Analytics
+   - Network statistics
+   - MEV detection
+   - Popular contract tracking
+2. Wallet Security
+   - Hardware wallet support
+   - Transaction simulation
+   - Multi-signature support
+
+## Additional Features
+
+### Analytics Tools
+- Gas price prediction
+- Network congestion metrics
+- MEV monitoring
+- Popular smart contract tracking
+
+### Developer Tools
+- ABI decoder/encoder
+- Contract verification
+- Transaction decoder
+- RPC endpoint monitoring
+
+## Technical Requirements
+
+### Performance Targets
+- Block processing: < 1s
+- Transaction queries: < 100ms
+- Wallet operations: < 500ms
+
+### Security Standards
+- Encrypted key storage
+- Secure RPC communication
+- Transaction validation
+- Gas limit checks
+
+## Testing Requirements
+- Unit tests for core logic
+- Integration tests with testnets
+- Security audits for wallet features
+- Performance benchmarking
+
+## Documentation
+- API documentation
+- User guides
+- Security guidelines
+- Network compatibility specs
