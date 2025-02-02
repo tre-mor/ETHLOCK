@@ -14,9 +14,10 @@ use std::error::Error;
 //     Ok(provider)
 // }
 
-pub type GenericProvider = RpcClient;
+// pub type GenericProvider = RpcClient;
 
-pub fn build_provider_from_url(url_str: &str) -> Result<GenericProvider, Box<dyn Error>> {
+pub fn build_provider_from_url(url_str: &str) -> Result<RpcClient, Box<dyn Error>> 
+{
     let url = Url::parse(url_str)?;
     let provider = RpcClient::new_http(url);
     Ok(provider)
