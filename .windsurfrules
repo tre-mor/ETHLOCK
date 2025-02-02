@@ -1,10 +1,14 @@
 # EVM Blockchain Explorer and Wallet Project Rules
 
 ## Documentation
-**reference https://github.com/alloy-rs/alloy/tree/main/crates for any and all functionality**
+**reference https://github.com/alloy-rs/alloy/ for any and all functionality**
 
 ## Project Overview
 EVM-compatible blockchain explorer and wallet implementation using Rust and the alloy crate ecosystem.
+
+## NOTES
+
+1. I recently updated alloy to version 0.11.0, which changed functionality regarding providers
 
 ## Core Functionalities
 

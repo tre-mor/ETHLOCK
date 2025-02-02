@@ -8,24 +8,7 @@ use std::str::FromStr;
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>>
 {
-    // let rpc_url: reqwest::Url =
-    //     "https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86".parse()?;
-    // let provider = ProviderBuilder::new().on_http(rpc_url);
-
     let provider = provider_info::build_provider_from_url("https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86")?;
-    
-    // let block_option = provider.get_block_by_number(Latest, Full).await?;
-
-    // if let Some(block) = block_option
-    // {
-    //     let btxdet: block_info::BlockTransactionsDetails =
-    // block_info::BlockTransactionsDetails::build_struct(&provider, block).await?;
-
-    //     for transaction in btxdet.transactions
-    //     {
-    //         transaction.print_details();
-    //     }
-    // }
 
     let tx = 
         transaction_info::TransactionDetails::get
@@ -37,6 +20,22 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>
     {
         tx.print_transaction_details();
     }
+
+        // let rpc_url: reqwest::Url =
+    //     "https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86".parse()?;
+    // let provider = ProviderBuilder::new().on_http(rpc_url);
+// let block_option = provider.get_block_by_number(Latest, Full).await?;
+
+    // if let Some(block) = block_option
+    // {
+    //     let btxdet: block_info::BlockTransactionsDetails =
+    // block_info::BlockTransactionsDetails::build_struct(&provider, block).await?;
+
+    //     for transaction in btxdet.transactions
+    //     {
+    //         transaction.print_details();
+    //     }
+    // }
 
     // if let Ok(latest_block_number) = block_info::get_latest_block_number(&provider).await
     // {

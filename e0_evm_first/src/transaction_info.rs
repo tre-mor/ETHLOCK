@@ -10,20 +10,16 @@ use alloy::
     {
         Address, Bytes, TxKind, B256, U256
     }, 
-    providers::
-    {
-        Provider,
-        RootProvider,
-    },
+    providers::Provider,
     rpc::types::
     {
         BlockTransactionsKind, Transaction, TransactionReceipt
-    }, 
-    transports::http::Http
+    }
 };
-use reqwest::Client;
 
+use crate::provider_info::GenericProvider;
 
+/// A struct that contains the details of a transaction.
 #[derive(Debug)]
 pub struct TransactionDetails
 {
@@ -33,7 +29,8 @@ pub struct TransactionDetails
 
 impl TransactionDetails
 {
-    pub async fn get(provider: &RootProvider<Http<Client>>, transaction_hash: B256) -> Result<TransactionDetails, Box<dyn Error>>
+    /// Retrieves the details of a transaction from the blockchain.
+    pub async fn get(provider: &GenericProvider, transaction_hash: B256) -> Result<TransactionDetails, Box<dyn Error>>
     {
         if let Ok(Some(transaction)) = provider.get_transaction_by_hash(transaction_hash).await
         {
@@ -62,6 +59,7 @@ impl TransactionDetails
         }
     }
     
+    /// Builds a new `TransactionDetails` instance from a transaction and a transaction receipt.
     pub fn build(transaction: Transaction, transaction_receipt: TransactionReceipt, base_fee_per_gas: Option<u64>) -> Self
     {
         TransactionDetails
@@ -71,6 +69,7 @@ impl TransactionDetails
         }
     }
 
+    /// Prints the details of the transaction.
     pub fn print_transaction_details(&self)
     {
         match self.submission_details.eip_type
@@ -84,6 +83,7 @@ impl TransactionDetails
         }
     }
 
+    /// Prints the details of a legacy transaction.
     fn print_legacy_transaction_details(&self)
     {
         let to_field = match self.submission_details.to
@@ -111,6 +111,7 @@ impl TransactionDetails
         println!("              block hash: {}", self.outcome_details.block_hash.expect("failed to retrieve block hash"));        
     }
 
+    /// Prints the details of a post-1559 transaction.
     fn print_post_1559_transaction_details(&self)
     {
         let to_field = match self.submission_details.to
@@ -199,6 +200,7 @@ pub struct SubmissionDetails
 
 impl SubmissionDetails
 {
+    /// Builds a new `SubmissionDetails` instance from a transaction.
     pub fn build(transaction: Transaction, base_fee_per_gas: Option<u64>) -> Self
     {
         let (eip_type, to, value) = SubmissionDetails::fill_fields_from_transaction(&transaction);
@@ -220,6 +222,7 @@ impl SubmissionDetails
         }
     }
 
+    /// Fills the fields of a `SubmissionDetails` instance from a transaction.
     pub fn fill_fields_from_transaction(transaction: &Transaction) -> (EipType, TxKind, U256)
     {
         let (eip, to, val) = match &transaction.inner
@@ -253,6 +256,7 @@ impl SubmissionDetails
         (eip, to, val)
     }  
     
+    /// Finds the EIP type of a transaction.
     pub fn find_eip_type_from_transaction(transaction: &Transaction) -> EipType
     {
         match &transaction.inner
@@ -273,6 +277,7 @@ impl SubmissionDetails
     }
 
     
+    /// Finds the recipient of a transaction.
     pub fn find_recipient_from_transaction(transaction: &Transaction) -> TxKind
     {
         let returned_tx_kind: TxKind = match &transaction.inner
@@ -294,6 +299,7 @@ impl SubmissionDetails
         returned_tx_kind
     }
 
+    /// Finds the value of a transaction.
     pub fn find_value_from_transaction(transaction: &Transaction) -> U256
     {
         let returned_value: U256 = match &transaction.inner
