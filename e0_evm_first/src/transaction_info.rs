@@ -19,9 +19,11 @@ use alloy::
 
 use crate::provider_info::GenericProvider;
 
-// use crate::provider_info::GenericProvider;
-
 /// A struct that contains the details of a transaction.
+///
+/// The submission details include the transaction details present at submission
+///
+/// The outcome details include the transaction details present after the outcome is defined
 #[derive(Debug)]
 pub struct TransactionDetails
 {
@@ -32,12 +34,19 @@ pub struct TransactionDetails
 impl TransactionDetails
 {
     /// Retrieves the details of a transaction from the blockchain.
+    ///
+    /// This function will return `Ok(TransactionDetails)` if the transaction and its receipt are found.
+    /// If the transaction is not found, it will return `Err("Transaction not found")`.
+    /// If the transaction receipt is not found, it will return `Err("Transaction receipt not found")`.
     pub async fn get(provider: &GenericProvider, transaction_hash: B256) -> Result<TransactionDetails, Box<dyn Error>>
     {
+        // Check if the transaction exists
         if let Ok(Some(transaction)) = provider.get_transaction_by_hash(transaction_hash).await
         {
+            // Check if the transaction receipt exists
             if let Ok(Some(transaction_receipt)) = provider.get_transaction_receipt(transaction_hash).await
             {
+                // Get the base fee per gas from the block that the transaction was included in
                 let mut base_fee_per_gas = None;
 
                 if let Some(block_hash) = transaction_receipt.block_hash
@@ -48,15 +57,18 @@ impl TransactionDetails
                     }
                 }
 
+                // Build the TransactionDetails struct
                 Ok(TransactionDetails::build(transaction, transaction_receipt, base_fee_per_gas))
             }
             else
             {
+                // If the transaction receipt is not found, return an error
                 Err("Transaction receipt not found".into())
             }
         }
         else
         {
+            // If the transaction is not found, return an error
             Err("Transaction not found".into())
         }
     }
@@ -205,7 +217,7 @@ impl SubmissionDetails
     /// Builds a new `SubmissionDetails` instance from a transaction.
     pub fn build(transaction: Transaction, base_fee_per_gas: Option<u64>) -> Self
     {
-        let (eip_type, to, value) = SubmissionDetails::fill_fields_from_transaction(&transaction);
+        let (eip_type, to, value) = SubmissionDetails::fill_eip_to_value_fields_from_transaction(&transaction);
         
          SubmissionDetails
         {
@@ -225,7 +237,7 @@ impl SubmissionDetails
     }
 
     /// Fills the fields of a `SubmissionDetails` instance from a transaction.
-    pub fn fill_fields_from_transaction(transaction: &Transaction) -> (EipType, TxKind, U256)
+    fn fill_eip_to_value_fields_from_transaction(transaction: &Transaction) -> (EipType, TxKind, U256)
     {
         let (eip, to, val) = match &transaction.inner
         {
@@ -259,7 +271,7 @@ impl SubmissionDetails
     }  
     
     /// Finds the EIP type of a transaction.
-    pub fn find_eip_type_from_transaction(transaction: &Transaction) -> EipType
+    fn find_eip_type_from_transaction(transaction: &Transaction) -> EipType
     {
         match &transaction.inner
         {
@@ -280,7 +292,7 @@ impl SubmissionDetails
 
     
     /// Finds the recipient of a transaction.
-    pub fn find_recipient_from_transaction(transaction: &Transaction) -> TxKind
+    fn find_recipient_from_transaction(transaction: &Transaction) -> TxKind
     {
         let returned_tx_kind: TxKind = match &transaction.inner
         {
@@ -302,7 +314,7 @@ impl SubmissionDetails
     }
 
     /// Finds the value of a transaction.
-    pub fn find_value_from_transaction(transaction: &Transaction) -> U256
+    fn find_value_from_transaction(transaction: &Transaction) -> U256
     {
         let returned_value: U256 = match &transaction.inner
         {
