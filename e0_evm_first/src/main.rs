@@ -1,4 +1,4 @@
-mod keys;
+mod key_info;
 mod block_info;
 mod provider_info;
 mod transaction_info;
