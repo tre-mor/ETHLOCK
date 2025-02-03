@@ -11,15 +11,13 @@ use alloy::
         Address, Bytes, TxKind, B256, U256
     }, 
     providers::Provider,
-    rpc::
+    rpc::types::
     {
-        client::RpcClient, 
-        types::
-        {
-            BlockTransactionsKind, Transaction, TransactionReceipt
-        }
-    }
+        BlockTransactionsKind, Transaction, TransactionReceipt
+    },
 };
+
+use crate::provider_info::GenericProvider;
 
 // use crate::provider_info::GenericProvider;
 
@@ -34,7 +32,7 @@ pub struct TransactionDetails
 impl TransactionDetails
 {
     /// Retrieves the details of a transaction from the blockchain.
-    pub async fn get(provider: &RpcClient, transaction_hash: B256) -> Result<TransactionDetails, Box<dyn Error>>
+    pub async fn get(provider: &GenericProvider, transaction_hash: B256) -> Result<TransactionDetails, Box<dyn Error>>
     {
         if let Ok(Some(transaction)) = provider.get_transaction_by_hash(transaction_hash).await
         {

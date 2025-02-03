@@ -25,7 +25,8 @@ use alloy::
 };
 use reqwest::Client;
 use std::error::Error;
-use crate::transaction_info::TransactionDetails;
+
+use crate::{provider_info::GenericProvider, transaction_info::TransactionDetails};
 
 
 
@@ -126,7 +127,7 @@ pub struct BlockTransactionsDetails
 
 impl BlockTransactionsDetails
 {
-    pub async fn build_struct(provider: &RootProvider<Http<Client>>, block: Block) -> Result<BlockTransactionsDetails, Box<dyn Error>>
+    pub async fn build_struct(provider: &GenericProvider, block: Block) -> Result<BlockTransactionsDetails, Box<dyn Error>>
     {
         let returned_struct = BlockTransactionsDetails
         {

@@ -2,13 +2,14 @@ mod keys;
 mod block_info;
 mod provider_info;
 mod transaction_info;
+mod rpc_client;
 
 use std::str::FromStr;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>>
 {
-    let provider = provider_info::build_provider_from_url("https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86")?;
+    let provider = provider_info::build_provider_from_url_str("https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86")?;
 
     let tx = 
         transaction_info::TransactionDetails::get
