@@ -247,12 +247,12 @@ graph TD
 ```
 
 
-|  | 1-tap | 2-taps | 3-taps | Hold |
+<!-- |  | 1-tap | 2-taps | 3-taps | Hold |
 | --- | --- | --- | --- | --- |
 | Left | HearThrough | AI Assistant | - | volume down
-| Right | play/pause | next song | previous song | volume up |
+| Right | play/pause | next song | previous song | volume up | -->
 
-# When specifically called to, generate a commit message. 
+<!-- # When specifically called to, generate a commit message. 
 
 ## Use the following format for each atomic change within the commit message:  `prefix: short description`  
     - Separate each atomic change with a newline
@@ -273,4 +273,45 @@ graph TD
  13. init: New project or feature
  14. merge: Merge branches
  15. wip: Mark work in progress
- 16. release: Release preparations
+ 16. release: Release preparations -->
+
+## RootProvider hierarchy
+
+```mermaid
+graph TD
+    A[RootProvider] --> B[Transport Layer]
+    A --> C[Network Type]
+    B --> D[HTTP Transport]
+    D --> E[Reqwest Client]
+    C --> F[Ethereum Network]
+    
+    style A fill:#4CAF50
+    style C fill:#2196F3
+    style D fill:#BB1000
+ ```
+
+## key management architecture
+
+```mermaid
+graph LR
+    A[KeyManager] --> B[Key Generation]
+    A --> C[Key Storage]
+    A --> D[Key Operations]
+    
+    B --> B1[Create New Keys]
+    B --> B2[Derive Child Keys]
+    B --> B3[Import Keys]
+    
+    C --> C1[Secure Storage]
+    C --> C2[Encryption]
+    C --> C3[Backup]
+    
+    D --> D1[Sign Messages]
+    D --> D2[Verify Signatures]
+    D --> D3[Address Generation]
+    
+    style A fill:#2ecc71
+    style B fill:#3498db
+    style C fill:#e74c3c
+    style D fill:#d64d6e
+```

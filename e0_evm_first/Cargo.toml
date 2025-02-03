@@ -11,3 +11,4 @@ reqwest = { version = "0.12.12", features = ["json"] }
 serde = "1.0.217"
 serde_json = "1.0.135"
 url = "2.5.0"
+k256 = "0.13.4"

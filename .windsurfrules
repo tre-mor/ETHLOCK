@@ -14,6 +14,7 @@ EVM-compatible blockchain explorer and wallet implementation using Rust and the 
   - Remember that mermaid tables are NOT substitutes for natural language write ups, they are supplementary
   - Remember that I am viewing the tables in a vertical view, so switch between TD and LR depending on the height / width of the hierarchy
   - Use colors to highlight important information that don't obscure white text
+    - Do NOT use light colors like cyan, yellow as background fill colors
 - I recently updated alloy to version 0.11.0, which changed functionality regarding providers
 
 ## Core Functionalities
