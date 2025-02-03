@@ -13,21 +13,10 @@ use std::time::Duration;
 
 use crate::rpc_client;
 
-// pub type GenericProvider = RootProvider<Http<Client>>;
-
-// pub fn build_provider_from_url(url_str: &str) -> Result<GenericProvider, Box<dyn Error>> {
-//     let url = Url::parse(url_str)?;
-//     let transport = Http::new(url)?;
-//     let provider = RootProvider::new(transport);
-//     Ok(provider)
-// }
-
 pub type GenericProvider = RootProvider<Ethereum>;
 
 pub fn build_provider_from_url_str(url_str: &str) -> Result<GenericProvider, Box<dyn Error>> 
 {
-    // let url = Url::parse(url_str)?;
-
     let client = rpc_client::build_rpc_client_from_url_str(url_str)?;
 
     let provider = RootProvider::new(client);

@@ -28,8 +28,6 @@ use std::error::Error;
 
 use crate::{provider_info::GenericProvider, transaction_info::TransactionDetails};
 
-
-
 #[derive(Debug)]
 pub struct BlockStruct
 {
@@ -141,7 +139,7 @@ impl BlockTransactionsDetails
         Ok(returned_struct) 
     }
 
-    pub async fn build_transactions_vec_from_block_ref(provider: &RootProvider<Http<Client>>, block: &Block) -> Result<Vec<TransactionDetails>, Box<dyn Error>>
+    pub async fn build_transactions_vec_from_block_ref(provider: &GenericProvider, block: &Block) -> Result<Vec<TransactionDetails>, Box<dyn Error>>
     {
         let mut returned_vec: Vec<TransactionDetails> = Vec::new();
         
@@ -164,7 +162,7 @@ impl BlockTransactionsDetails
         Ok(returned_vec) 
     }
     
-    pub async fn build_transactions_vec_from_ident(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<Vec<TransactionDetails>, Box<dyn Error>>
+    pub async fn build_transactions_vec_from_ident(provider: &GenericProvider, ident: BlockNumberOrTag) -> Result<Vec<TransactionDetails>, Box<dyn Error>>
     {
         let mut returned_vec: Vec<TransactionDetails> = Vec::new();
         
@@ -193,7 +191,7 @@ impl BlockTransactionsDetails
     }
 }
 
-pub async fn get_latest_block_number(provider: &RootProvider<Http<Client>>) -> Result<u64, Box<dyn Error>>
+pub async fn get_latest_block_number(provider: &GenericProvider) -> Result<u64, Box<dyn Error>>
 {
     let latest_block_number = provider.get_block_number().await?;
 
@@ -208,7 +206,7 @@ pub async fn get_latest_n_block_numbers(latest_block_number: u64, n: u64) -> Res
     Ok(returned_vec)
 }
 
-pub async fn build_block_struct(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockStruct, Box<dyn Error>>
+pub async fn build_block_struct(provider: &GenericProvider, ident: BlockNumberOrTag) -> Result<BlockStruct, Box<dyn Error>>
 {  
     let block_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
 
@@ -235,7 +233,7 @@ pub async fn build_block_struct(provider: &RootProvider<Http<Client>>, ident: Bl
     Ok(returned_struct)
 }
 
-pub async fn build_block_struct_simple(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockStructSimple, Box<dyn Error>>
+pub async fn build_block_struct_simple(provider: &GenericProvider, ident: BlockNumberOrTag) -> Result<BlockStructSimple, Box<dyn Error>>
 {
     let block_data_option = provider.get_block_by_number(ident, Full).await?;
     
@@ -252,7 +250,7 @@ pub async fn build_block_struct_simple(provider: &RootProvider<Http<Client>>, id
     Ok(returned_struct)
 }
 
-pub async fn view_block_header_data(provider: &RootProvider<Http<Client>>, ident: BlockNumberOrTag) -> Result<BlockHeaderData, Box<dyn Error>>
+pub async fn view_block_header_data(provider: &GenericProvider, ident: BlockNumberOrTag) -> Result<BlockHeaderData, Box<dyn Error>>
 {
     let block_data_option: Option<Block> = provider.get_block_by_number(ident, Full).await?;
 
