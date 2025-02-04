@@ -854,4 +854,48 @@ fn main() {
 2. **`SecretKey`** is **low-level**: Best for **storing, importing, exporting private keys**.
 3. **Use `SecretKey` to store keys securely, and convert it to `SigningKey` when you need to sign messages**.
 
-Would you like guidance on integrating this into a wallet backend? 🚀
+# generic "0x" prefix remover
+
+```mermaid
+graph TD
+    A[Generic Functions] --> B[Trait Bound<br/>T: Display]
+    A --> C[Generic Const<br/>FixedBytes N]
+    
+    B --> B1["✓ More flexible<br/>✓ Works with any Display type<br/>× Less type-safe"]
+    C --> C1["✓ More type-safe<br/>✓ Guaranteed 0x prefix<br/>× Only works with FixedBytes"]
+    
+    B1 --> D["Example:<br/>remove_hex_prefix(&value)"]
+    C1 --> E["Example:<br/>remove_hex_prefix_fixed(&bytes)"]
+    
+    style A fill:#6050DC,color:#fff
+    style B fill:#2E4053,color:#fff
+    style C fill:#2E4053,color:#fff
+```
+
+```rust
+/// Removes the "0x" prefix from any FixedBytes type that implements Display.
+/// 
+/// This function works with both Address (FixedBytes<20>) and B256 (FixedBytes<32>).
+/// 
+/// # Examples
+let address = derive_address(&signer);
+let clean_address = remove_hex_prefix(&address);
+
+let b256 = derive_private_key_as_bytes(&signer);
+let clean_b256 = remove_hex_prefix(&b256);
+
+// Trait Bound T: Display
+pub fn remove_hex_prefix<T: std::fmt::Display>(value: &T) -> String {
+    let string = value.to_string();
+    string.strip_prefix("0x").unwrap_or(&string).to_string()
+}
+
+// We can also make a version that's specific to FixedBytes for extra type safety
+/// Removes the "0x" prefix from any FixedBytes type.
+/// 
+/// This is a more type-safe version that only works with FixedBytes types,
+/// such as Address (FixedBytes<20>) and B256 (FixedBytes<32>).
+pub fn remove_hex_prefix_fixed<const N: usize>(bytes: &FixedBytes<N>) -> String {
+    bytes.to_string()[2..].to_string()
+}
+```

@@ -6,8 +6,6 @@ mod rpc_client;
 
 use std::str::FromStr;
 
-use key_info::get_b256_string_without_hex_identifier;
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>>
 {
@@ -38,7 +36,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>
 
     println!("private key: {}", &key_info::derive_private_key_as_bytes(&generic_signer).to_string()[2..]);
 
-    println!("private key: {}", get_b256_string_without_hex_identifier(&key_info::derive_private_key_as_bytes(&generic_signer)));
+    println!("private key: {}", key_info::remove_hex_prefix_from_fixed_bytes(&key_info::derive_private_key_as_bytes(&generic_signer)));
 
     println!("    address: {}", key_info::derive_address_from_generic_signer(&generic_signer));
 

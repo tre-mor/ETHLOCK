@@ -2,18 +2,14 @@ use alloy::
 {
     primitives::
     {
-        Address,
-        B256
+        Address, 
+        FixedBytes, 
+        B256,
     }, 
     signers::
     {
         self, 
-        local::
-        {
-            LocalSigner,
-            PrivateKeySigner,
-        },
-        // utils,
+        local::LocalSigner,
     }
 };
 use k256::
@@ -98,6 +94,17 @@ pub fn get_b256_string_without_hex_identifier(b256: &B256) -> String
     }
 }   
 
+/// Returns a string representation of a FixedBytes type, without the "0x" prefix.
+/// 
+/// The returned string is a substring of the original FixedBytes::to_string() output,
+/// starting from the 3rd character (index 2).
+/// 
+/// note: all FixedBytes types print with the prefix "0x" when `#` flag is not set.
+pub fn remove_hex_prefix_from_fixed_bytes<const N: usize>(fixed_bytes: &FixedBytes<N>) -> String
+{
+    fixed_bytes.to_string()[2..].to_string()
+}
+
 /// Returns the Ethereum address of the given GenericSigner.
 /// 
 /// This function retrieves the address associated with the GenericSigner,
@@ -109,11 +116,23 @@ pub fn derive_address_from_generic_signer(generic_signer: &GenericSigner) -> Add
     generic_signer.address()
 }
 
+/// Returns the Ethereum address derived from the given SigningKey.
+/// 
+/// This function retrieves the address associated with the given SigningKey,
+/// which is derived from the public key of the SigningKey.
+/// 
+/// note: the address can be compressed when printed with the `#` flag.
 pub fn derive_address_from_signing_key(signing_key: &SigningKey) -> Address
 {
     signers::utils::secret_key_to_address(signing_key)
 }
 
+/// Returns the Ethereum address derived from the given VerifyingKey.
+/// 
+/// This function retrieves the address associated with the given VerifyingKey,
+/// which is derived from the public key of the VerifyingKey.
+/// 
+/// note: the address can be compressed when printed with the `#` flag.
 pub fn derive_address_from_verifying_key(verifying_key: &VerifyingKey) -> Address
 {
     signers::utils::public_key_to_address(verifying_key)
