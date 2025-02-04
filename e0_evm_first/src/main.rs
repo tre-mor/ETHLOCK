@@ -22,6 +22,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>
         tx.print_transaction_details();
     }
 
+    // format!("{:?}", key_info::derive_private_key(&key_info::generate_new_signer()));
         // let rpc_url: reqwest::Url =
     //     "https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86".parse()?;
     // let provider = ProviderBuilder::new().on_http(rpc_url);

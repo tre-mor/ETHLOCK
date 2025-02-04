@@ -1,0 +1,12 @@
+C:\DASHBOARD\BROGRAM\rust_dep\2_evm\e0_evm_first\target\debug\deps\libecdsa-e9f030cb1042eb37.rmeta: C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\lib.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\normalized.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\recovery.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\der.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\hazmat.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\signing.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\verifying.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\../README.md
+
+C:\DASHBOARD\BROGRAM\rust_dep\2_evm\e0_evm_first\target\debug\deps\ecdsa-e9f030cb1042eb37.d: C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\lib.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\normalized.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\recovery.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\der.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\hazmat.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\signing.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\verifying.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\../README.md
+
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\lib.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\normalized.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\recovery.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\der.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\hazmat.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\signing.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\verifying.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\ecdsa-0.16.9\src\../README.md:

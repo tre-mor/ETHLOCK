@@ -10,12 +10,43 @@ EVM-compatible blockchain explorer and wallet implementation using Rust and the 
 
 - When referencing anything in the documentation, append a citation noting the EXACT location of information in the documentation to the end of the response, after the mandatory commit message
   - Do this in a markdown codeblock.
-- Always create mermaid tables to explain concepts, ideas, structures, and relationships.
-  - Remember that mermaid tables are NOT substitutes for natural language write ups, they are supplementary
-  - Remember that I am viewing the tables in a vertical view, so switch between TD and LR depending on the height / width of the hierarchy
-  - Use colors to highlight important information that don't obscure white text
-    - Do NOT use light colors like cyan, yellow as background fill colors
 - I recently updated alloy to version 0.11.0, which changed functionality regarding providers
+- Always create mermaid tables to explain concepts, ideas, structures, and relationships
+  - Refer to the Mermaid Diagrom Information section below for information on choosing a mermaid diagram type
+  - Remember that mermaid tables are NOT substitutes for natural language write ups, they are supplementary
+
+## Mermaid Diagram Information
+
+### Colors
+  - Use colors to highlight important information that don't obscure white text
+  - Do NOT use light colors like cyan, yellow as background fill colors
+
+### Mermaid Diagram Types
+
+### Types
+
+> Remember to use your judgement to choose from multiple different mermaid diagram types to facilitate the most human-readable and intuitive representation of information
+
+- refer to the [mermaid syntax documentation](https://github.com/mermaid-js/mermaid/tree/develop/docs/syntax) to choose and define your diagram type from the list below
+  - architecture-beta
+  - block-beta
+  - classDiagram
+  - erDiagram
+  - gantt
+  - gitGraph
+  - graphTD/graphLR
+  - journey
+  - kanban
+  - mindmap
+  - packet-beta
+  - pie
+  - quadrantChart
+  - requirementDiagram
+  - sankey-beta
+  - sequenceDiagram
+  - stateDiagram-v2
+  - timeline
+  - xychart-beta
 
 ## Core Functionalities
 

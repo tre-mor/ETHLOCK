@@ -315,3 +315,115 @@ graph LR
     style C fill:#e74c3c
     style D fill:#d64d6e
 ```
+
+## secp256k1 (k256) information
+
+```mermaid
+graph LR
+    subgraph Core["Core Components"]
+        A[secp256k1 Scalar Field] -->|Properties| B[Non-zero Elements]
+        B -->|Range| C["1 to n-1<br/>(n ≈ 2^256)"]
+        B -->|Size| D[32 bytes / 256 bits]
+    end
+
+    subgraph Security["Security Aspects"]
+        E[Security Requirements] -->|RNG| F[Cryptographically Secure]
+        E -->|Distribution| G[Uniform]
+        E -->|Validation| H[Non-zero Check]
+        E -->|Storage| I[Secure Memory]
+    end
+
+    subgraph Implementation["Implementation"]
+        J[k256 Crate] -->|Features| K[Arithmetic]
+        J -->|Traits| L[RngCore + CryptoRng]
+        J -->|Type| M[LocalSigner<SigningKey>]
+    end
+
+    subgraph Usage["Ethereum Usage"]
+        N[Applications] -->|Primary| O[Private Keys]
+        N -->|Secondary| P[Digital Signatures]
+        N -->|Derived| Q[Public Keys]
+        
+        O -->|Operations| R[ECDSA]
+        P -->|Purpose| S[Transaction Signing]
+        Q -->|Method| T[Scalar Multiplication]
+    end
+
+    style Core fill:#6050DC,color:#fff
+    style Security fill:#2E4053,color:#fff
+    style Implementation fill:#6050DC,color:#fff
+    style Usage fill:#2E4053,color:#fff
+```
+
+## non zero scalars
+
+```mermaid
+graph LR
+    subgraph Scalar["What is a Scalar?"]
+        A[Single Number] -->|Properties| B[Used for Multiplication]
+        A -->|Range| C["Between 1 and n-1"]
+        A -->|Restriction| D[Never Zero]
+    end
+
+    subgraph Example["Simple Example"]
+        E[Point P on Curve] -->|Multiply by| F[Scalar k]
+        F -->|Results in| G[Point Q]
+        H[If k = 0] -->|Problem| I[Q = 0 × P = 0]
+        I -->|Result| J[Insecure Key]
+    end
+
+    subgraph Usage["In Cryptocurrency"]
+        K[Private Key] -->|Is a| L[Non-zero Scalar]
+        L -->|Multiplies| M[Generator Point]
+        M -->|Creates| N[Public Key]
+    end
+
+    style Scalar fill:#6050DC,color:#fff
+    style Example fill:#2E4053,color:#fff
+    style Usage fill:#4CAF50,color:#fff
+```
+
+### What is a Scalar?
+
+A scalar is just a regular number, like `5` or `123`.
+
+#### Key Points
+
+* It's a single number (not a point or coordinate)
+* It must not be zero because:
+	+ Multiplying anything by zero gives zero
+	+ A zero private key would be predictable and insecure
+* When used as a private key:
+	+ It multiplies a special point on the curve (generator point)
+	+ This multiplication produces your public key
+	+ The multiplication is one-way (can't be reversed)
+
+## private key and address generation
+
+```mermaid
+graph LR
+    subgraph PrivateKey["Private Key Generation"]
+        A[Random Number Generator] -->|Generate| B[32 Bytes]
+        B -->|Validate| C{Requirements}
+        C -->|1| D[Non-zero]
+        C -->|2| E[< n where n is curve order]
+        C -->|3| F[256 bits length]
+    end
+
+    subgraph PublicKey["Public Key Generation"]
+        G[Private Key] -->|ECDSA| H[Curve Point]
+        H -->|Uncompressed Format| I[04 + x + y coordinates]
+        I -->|64 bytes| J[Public Key]
+    end
+
+    subgraph Address["Address Generation"]
+        K[Public Key] -->|Remove 04 prefix| L[Raw Public Key]
+        L -->|Keccak-256| M[32 byte hash]
+        M -->|Take last 20 bytes| N[Address]
+        N -->|Optional| O[Checksum encoding]
+    end
+
+    style PrivateKey fill:#6050DC,color:#fff
+    style PublicKey fill:#2E4053,color:#fff
+    style Address fill:#4CAF50,color:#fff
+```

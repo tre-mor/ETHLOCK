@@ -1,0 +1,11 @@
+C:\DASHBOARD\BROGRAM\rust_dep\2_evm\e0_evm_first\target\debug\deps\libgetrandom-520ac0e257a63292.rmeta: C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src/lib.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\backends.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\error.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\util.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\error_std_impls.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\../README.md C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\backends\windows.rs
+
+C:\DASHBOARD\BROGRAM\rust_dep\2_evm\e0_evm_first\target\debug\deps\getrandom-520ac0e257a63292.d: C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src/lib.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\backends.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\error.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\util.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\error_std_impls.rs C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\../README.md C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\backends\windows.rs
+
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src/lib.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\backends.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\error.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\util.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\error_std_impls.rs:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\../README.md:
+C:\Users\ianka\.cargo\registry\src\index.crates.io-6f17d22bba15001f\getrandom-0.3.1\src\backends\windows.rs:
