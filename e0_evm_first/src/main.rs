@@ -6,23 +6,42 @@ mod rpc_client;
 
 use std::str::FromStr;
 
+use key_info::get_b256_string_without_hex_identifier;
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>>
 {
-    let provider = provider_info::build_provider_from_url_str("https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86")?;
+    // let provider = provider_info::build_provider_from_url_str("https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86")?;
 
-    let tx = 
-        transaction_info::TransactionDetails::get
-        (
-            &provider, alloy::primitives::B256::from_str("0x291351476ef62e83ed33fb385f998232b8577bd1af60eb3463ce5a9e77fc8666"
-        ).unwrap()).await;
+    // let tx = 
+    //     transaction_info::TransactionDetails::get
+    //     (
+    //         &provider, alloy::primitives::B256::from_str("0x291351476ef62e83ed33fb385f998232b8577bd1af60eb3463ce5a9e77fc8666"
+    //     ).unwrap()).await;
 
-    if let Ok(tx) = tx
-    {
-        tx.print_transaction_details();
-    }
+    // if let Ok(tx) = tx
+    // {
+    //     tx.print_transaction_details();
+    // }
 
-    // format!("{:?}", key_info::derive_private_key(&key_info::generate_new_signer()));
+    let generic_signer = key_info::generate_new_signer();
+
+    println!("private key: {}", key_info::derive_private_key(&generic_signer));
+
+    println!("private key: {}", key_info::derive_private_key_as_string(&generic_signer));
+
+    println!("private key: {:#}", key_info::derive_private_key_as_bytes(&generic_signer));
+
+    println!("private key: {}", key_info::derive_private_key_as_bytes(&generic_signer));
+    
+    println!("private key: {}", &key_info::derive_private_key_as_bytes(&generic_signer).to_string());
+
+    println!("private key: {}", &key_info::derive_private_key_as_bytes(&generic_signer).to_string()[2..]);
+
+    println!("private key: {}", get_b256_string_without_hex_identifier(&key_info::derive_private_key_as_bytes(&generic_signer)));
+
+    println!("    address: {}", key_info::derive_address(&generic_signer));
+
         // let rpc_url: reqwest::Url =
     //     "https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86".parse()?;
     // let provider = ProviderBuilder::new().on_http(rpc_url);

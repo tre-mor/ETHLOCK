@@ -1,4 +1,4 @@
-## different RpcClient types and their characteristics / use-cases
+# different RpcClient types and their characteristics / use-cases
 
 ```mermaid
 graph LR
@@ -20,7 +20,7 @@ graph LR
 
 ```
 
-## using hyper http over http for RpcClient
+# using hyper http over http for RpcClient
 
 Complexity:
 
@@ -67,7 +67,7 @@ graph LR
     F --> F2[Platform specific]
 ```
 
-## implementation of Http RpcClient
+# implementation of Http RpcClient
 
 ```mermaid
 graph TD
@@ -104,7 +104,7 @@ graph TD
     style C fill:#9C27B0,stroke:#333,color:white
 ```
 
-## differences between RpcClient and Provider
+# differences between RpcClient and Provider
 
 ```mermaid
 graph TD
@@ -127,7 +127,7 @@ graph TD
     style D fill:#9C27B0,stroke:#333,color:white
 ```
 
-### RpcClient
+## RpcClient
 
 Low-level implementation that handles raw JSON-RPC communication
 
@@ -138,7 +138,7 @@ Responsible for:
 * Connection management
 * Error handling at transport level
 
-### Provider
+## Provider
 
 High-level interface for interacting with the Ethereum network
 
@@ -149,19 +149,19 @@ Provides:
 * Higher-level abstractions for blockchain operations
 * Convenience methods for common tasks
 
-### When to use Provider
+## When to use Provider
 
 * Working with common Ethereum operations
 * Need type safety and convenience methods
 * Want higher-level abstractions
 
-### When to use RpcClient
+## When to use RpcClient
 
 * Need custom RPC methods
 * Implementing custom provider functionality
 * Require direct transport control
 
-## provider hierarchy and use-cases
+# provider hierarchy and use-cases
 
 ```mermaid
 graph LR
@@ -192,7 +192,7 @@ graph LR
     style C fill:#9C27B0,stroke:#333,color:white
 ```
 
-## provider implementations for transaction_info.rs
+# provider implementations for transaction_info.rs
 
 ```mermaid
 graph LR
@@ -226,7 +226,7 @@ graph TD
     style C fill:#9C27B0,stroke:#333,color:white
 ```
 
-## provider trait for ProviderBuilder
+# provider trait for ProviderBuilder
 
 ```mermaid
 graph TD
@@ -254,10 +254,10 @@ graph TD
 
 <!-- # When specifically called to, generate a commit message. 
 
-## Use the following format for each atomic change within the commit message:  `prefix: short description`  
+# Use the following format for each atomic change within the commit message:  `prefix: short description`  
     - Separate each atomic change with a newline
 
-### Commit Prefixes:
+## Commit Prefixes:
  1. feat: Introduce new feature
  2. fix: Bug / issue fix
  3. tweak: Minor adjustment or improvement
@@ -275,7 +275,7 @@ graph TD
  15. wip: Mark work in progress
  16. release: Release preparations -->
 
-## RootProvider hierarchy
+# RootProvider hierarchy
 
 ```mermaid
 graph TD
@@ -290,7 +290,7 @@ graph TD
     style D fill:#BB1000
  ```
 
-## key management architecture
+# key management architecture
 
 ```mermaid
 graph LR
@@ -316,7 +316,7 @@ graph LR
     style D fill:#d64d6e
 ```
 
-## secp256k1 (k256) information
+# secp256k1 (k256) information
 
 ```mermaid
 graph LR
@@ -355,7 +355,7 @@ graph LR
     style Usage fill:#2E4053,color:#fff
 ```
 
-## non zero scalars
+# non zero scalars
 
 ```mermaid
 graph LR
@@ -383,11 +383,11 @@ graph LR
     style Usage fill:#4CAF50,color:#fff
 ```
 
-### What is a Scalar?
+## What is a Scalar?
 
 A scalar is just a regular number, like `5` or `123`.
 
-#### Key Points
+### Key Points
 
 * It's a single number (not a point or coordinate)
 * It must not be zero because:
@@ -398,7 +398,7 @@ A scalar is just a regular number, like `5` or `123`.
 	+ This multiplication produces your public key
 	+ The multiplication is one-way (can't be reversed)
 
-## private key and address generation
+# private key and address generation
 
 ```mermaid
 graph LR
@@ -426,4 +426,327 @@ graph LR
     style PrivateKey fill:#6050DC,color:#fff
     style PublicKey fill:#2E4053,color:#fff
     style Address fill:#4CAF50,color:#fff
+```
+
+# rust formatting traits with NonZeroScalars
+
+```mermaid
+graph TD
+    A[Rust Formatting Traits] -->|Basic| B[Display]
+    A -->|Debug| C[Debug]
+    
+    B -->|Uses| D["{}" format specifier]
+    C -->|Uses| E["{:?}" format specifier]
+    C -->|Pretty| F["{:#?}" format specifier]
+    
+    G[NonZeroScalar] -->|Implements| B
+    G -->|Does Not Implement| C
+    
+    style A fill:#6050DC,color:#fff
+    style G fill:#4CAF50,color:#fff
+    style B fill:#2E4053,color:#fff
+    style C fill:#2E4053,color:#fff
+```
+
+## Display ({}) - For user-facing output
+
+* Implements basic string representation
+* Usually more concise
+* What NonZeroScalar implements
+
+## Debug ({:?} or {:#?}) - For debugging
+
+* More detailed representation
+* Not implemented for NonZeroScalar
+* Would cause a compilation error
+
+# mermaid graph types
+
+```mermaid
+mindmap
+  root((Mermaid
+    Diagram
+    Types))
+    (Flow-Based)
+      [graphTD/LR]
+        (Process flows)
+        (Data pipelines)
+      [sequenceDiagram]
+        (API interactions)
+        (Message flows)
+      [stateDiagram-v2]
+        (State machines)
+        (Status transitions)
+    (Structural)
+      [classDiagram]
+        (Code architecture)
+        (Object relationships)
+      [erDiagram]
+        (Data models)
+        (Schema design)
+    (Planning)
+      [gantt]
+        (Project timelines)
+        (Task scheduling)
+      [timeline]
+        (Historical events)
+        (Version history)
+    (Analysis)
+      [pie]
+        (Distribution)
+        (Percentages)
+      [quadrantChart]
+        (Performance metrics)
+        (Risk assessment)
+      [xychart-beta]
+        (Trends)
+        (Correlations)
+    (Special Purpose)
+      [gitGraph]
+        (Version control)
+        (Branch strategy)
+      [journey]
+        (User flows)
+        (Experience maps)
+      [requirementDiagram]
+        (System requirements)
+        (Dependencies)
+```
+
+```mermaid
+journey
+  title User Wallet Creation
+  section Setup
+    Generate Keys: 5: User
+    Backup: 3: User
+    Verify: 5: User
+```
+
+```mermaid
+gitGraph
+  commit
+  branch develop
+  commit
+  checkout main
+  merge develop
+```
+
+```mermaid
+quadrantChart
+  title Risk vs Reward
+  x-axis Low Risk --> High Risk
+  y-axis Low Reward --> High Reward
+  quadrant-1 High Reward, Low Risk
+  quadrant-2 High Reward, High Risk
+  quadrant-3 Low Reward, Low Risk
+  quadrant-4 Low Reward, High Risk
+```
+
+```mermaid
+pie
+  title Transaction Types
+  "Transfer" : 45
+  "Contract" : 30
+  "Other" : 25
+```
+
+```mermaid
+timeline
+  title Version History
+  2024 : v1.0 Release
+  : Bug fixes
+  2025 : v2.0 Release
+```
+
+```mermaid
+gantt
+  title Project Timeline
+  section Phase 1
+  Task 1: 2024-01-01, 30d
+```
+
+```mermaid
+erDiagram
+  WALLET ||--o{ TRANSACTION : has
+  TRANSACTION {
+    string hash
+    uint value
+  }
+```
+
+```mermaid
+classDiagram
+  class Wallet {
+    +address: String
+    +sign(tx: Transaction)
+  }
+```
+
+```mermaid
+stateDiagram-v2
+  [*] --> Pending
+  Pending --> Confirmed
+  Pending --> Failed
+```
+
+```mermaid
+sequenceDiagram
+  Client->>Server: Request
+  Server->>Client: Response
+```
+
+# PrivateKey and SigningKey differences
+
+## **How `SigningKey` and `PrivateKey` Differ**  
+At their core, **both `SigningKey` and `PrivateKey` represent an ECDSA private key**, but they serve different purposes and provide different abstractions. Below is a detailed yet simple breakdown of how `SigningKey` **abstracts** over the raw `PrivateKey`.  
+
+---
+
+## **1. `PrivateKey` - The Raw Private Key (Low-Level Representation)**
+- `PrivateKey` **is just the raw 32-byte private key** used in Ethereum’s secp256k1 cryptography.  
+- It is **just data**—a number between `1` and `2^256 - 1`, which represents the secret used to sign transactions.
+- This means `PrivateKey` **does not inherently provide signing functionalities**—it simply holds the key.
+
+🔹 **Think of `PrivateKey` like a bank account number**: it holds value, but by itself, it doesn’t perform actions.
+
+### **Example of `PrivateKey` (Raw Storage)**
+```rust
+use alloy_primitives::B256;
+
+fn main() {
+    // A raw private key stored as 32 bytes
+    let raw_private_key = B256::from([0x11; 32]); // Just 32 bytes of secret data
+
+    println!("Raw Private Key: {:?}", raw_private_key);
+}
+```
+---
+
+## **2. `SigningKey` - An Abstraction Over `PrivateKey` (High-Level Representation)**
+- `SigningKey` **wraps the private key and adds signing capabilities**.
+- It internally **stores the private key** but also provides:
+  - Secure key handling
+  - Signature generation
+  - Public key derivation  
+- This means you can use `SigningKey` directly to sign messages, unlike `PrivateKey`, which is just raw data.
+
+🔹 **Think of `SigningKey` like a bank debit card**: it represents the account (private key) but also lets you perform transactions (sign messages).
+
+### **Example of `SigningKey` (High-Level Functionality)**
+```rust
+use k256::ecdsa::{SigningKey, Signature};
+use rand::thread_rng;
+
+fn main() {
+    // Create a signing key (which contains the private key inside)
+    let signing_key = SigningKey::random(&mut thread_rng());
+
+    // Sign a message
+    let message = b"Hello, Ethereum!";
+    let signature: Signature = signing_key.sign(message);
+
+    println!("Signature: {:?}", signature);
+}
+```
+---
+
+## **Key Differences Between `SigningKey` and `PrivateKey`**
+| Feature        | `PrivateKey` (`alloy_primitives::B256`) | `SigningKey` (`k256::ecdsa::SigningKey`) |
+|--------------|----------------------------------|----------------------------------|
+| **Stores Private Key?** | ✅ Yes (just raw bytes) | ✅ Yes (wrapped inside) |
+| **Can Sign Transactions?** | ❌ No (raw data only) | ✅ Yes (has signing methods) |
+| **Can Derive Public Key?** | ❌ No (needs extra functions) | ✅ Yes (`signing_key.verifying_key()`) |
+| **Security** | Needs explicit protection | Provides safer key handling |
+| **Analogy** | 🔢 Bank account number | 💳 Bank debit card |
+
+---
+
+## **How `SigningKey` Abstracts Over `PrivateKey`**
+1. **Encapsulation** – `SigningKey` **hides the private key inside itself**, preventing accidental exposure.
+2. **Functionality** – Instead of manually handling raw bytes, `SigningKey` **provides built-in signing and verification**.
+3. **Convenience** – With `SigningKey`, you don’t need to manually extract and format the private key—it **just works**.
+
+---
+
+## **Summary**
+- **`PrivateKey`** is **just** a raw 32-byte secret key.  
+- **`SigningKey`** is a **high-level wrapper** that includes the private key **plus** signing functionality.  
+- If you just need to store a key, **use `PrivateKey`**.  
+- If you need to sign transactions, **use `SigningKey`**.  
+
+Would you like an example of securely storing and using `SigningKey` in an EVM-compatible wallet? 🚀
+
+# representing B256 in different formats
+
+```mermaid
+graph TD
+    A[B256] --> B[Raw Hex]
+    A --> C[Prefixed Hex]
+    A --> D[Checksum]
+    
+    B -->|to_string| E["64 chars<br/>e.g. 1234...abcd"]
+    C -->|format!| F["66 chars<br/>e.g. 0x1234...abcd"]
+    D -->|to_checksum| G["66 chars<br/>e.g. 0x1234...aBcD"]
+    
+    style A fill:#6050DC,color:#fff
+    style B fill:#2E4053,color:#fff
+    style C fill:#2E4053,color:#fff
+    style D fill:#2E4053,color:#fff
+```
+
+# truncating 0x from printed B256
+
+```mermaid
+graph TD
+    A[String Methods] --> B[Slicing]
+    A --> C[strip_prefix]
+    A --> D["chars().skip"]
+    
+    B -->|"&str[2..]"| E["✓ Zero-copy<br/>✓ No allocation<br/>✓ O(1) time"]
+    C -->|".strip_prefix 0x"| F["✓ Safe<br/>× Returns Option<br/>× Pattern matching"]
+    D -->|".chars().skip(2)"| G["× Iterator overhead<br/>× More complex<br/>× Less readable"]
+    
+    style A fill:#6050DC,color:#fff
+    style B fill:#4CAF50,color:#fff
+    style C fill:#2E4053,color:#fff
+    style D fill:#2E4053,color:#fff
+```
+pri
+# 0x prefix
+
+```mermaid
+graph LR
+    A["0x Prefix"] --> B["Number Base Indicator"]
+    A --> C["Protocol Standard"]
+    A --> D["Data Format"]
+    A --> E["Error Prevention"]
+    
+    B --> B1["Explicitly indicates<br/>hexadecimal representation"]
+    C --> C1["Required by Ethereum<br/>JSON-RPC API"]
+    D --> D1["Distinguishes hex strings<br/>from decimal strings"]
+    E --> E1["Prevents misinterpretation<br/>of leading zeros"]
+    
+    style A fill:#6050DC,color:#fff
+    style B fill:#2E4053,color:#fff
+    style C fill:#2E4053,color:#fff
+    style D fill:#2E4053,color:#fff
+    style E fill:#2E4053,color:#fff
+```
+
+# display information for FixedBytes
+
+```mermaid
+graph TD
+    A[Display Implementation] --> B[Full Hex Mode]
+    A --> C[Compressed Mode<br/>if N > 4 or '#' flag]
+    
+    B --> B1["0x + full hex"]
+    C --> C1["0x + first 2 bytes + ... + last 2 bytes"]
+    
+    B1 --> D["Example:<br/>0x1234567890abcdef"]
+    C1 --> E["Example:<br/>0x1234...cdef"]
+    
+    style A fill:#6050DC,color:#fff
+    style B fill:#2E4053,color:#fff
+    style C fill:#2E4053,color:#fff
 ```
