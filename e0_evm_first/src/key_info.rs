@@ -1,15 +1,28 @@
 use alloy::
 {
-    primitives::{Address, B256}, 
-    signers::local::
+    primitives::
     {
-        LocalSigner,
-        PrivateKeySigner,
+        Address,
+        B256
+    }, 
+    signers::
+    {
+        self, 
+        local::
+        {
+            LocalSigner,
+            PrivateKeySigner,
+        },
+        // utils,
     }
 };
 use k256::
 {
-    ecdsa::SigningKey, 
+    ecdsa::
+    {
+        SigningKey, 
+        VerifyingKey,
+    }, 
     elliptic_curve::
     {
         rand_core::
@@ -20,8 +33,6 @@ use k256::
     },
     Secp256k1,
 };
-// use rand::{self, rng::Rng};
-// use rand::prelude::*;
 
 pub type GenericSigner = LocalSigner<SigningKey>;
 
@@ -92,9 +103,18 @@ pub fn get_b256_string_without_hex_identifier(b256: &B256) -> String
 /// This function retrieves the address associated with the GenericSigner,
 /// which is derived from the signer's public key.
 /// 
-/// note: `Secp256k1` implements Display, not Debug
-pub fn derive_address(generic_signer: &GenericSigner) -> Address
+/// note: the address can be compressed when printed with the `#` flag.
+pub fn derive_address_from_generic_signer(generic_signer: &GenericSigner) -> Address
 {
     generic_signer.address()
 }
 
+pub fn derive_address_from_signing_key(signing_key: &SigningKey) -> Address
+{
+    signers::utils::secret_key_to_address(signing_key)
+}
+
+pub fn derive_address_from_verifying_key(verifying_key: &VerifyingKey) -> Address
+{
+    signers::utils::public_key_to_address(verifying_key)
+}

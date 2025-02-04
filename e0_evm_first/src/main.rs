@@ -40,7 +40,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>
 
     println!("private key: {}", get_b256_string_without_hex_identifier(&key_info::derive_private_key_as_bytes(&generic_signer)));
 
-    println!("    address: {}", key_info::derive_address(&generic_signer));
+    println!("    address: {}", key_info::derive_address_from_generic_signer(&generic_signer));
+
+    println!("    address: {:#}", key_info::derive_address_from_generic_signer(&generic_signer));
+
+    println!("    address: {:?}", key_info::derive_address_from_generic_signer(&generic_signer));
+
+    println!("    address: {:#?}", key_info::derive_address_from_generic_signer(&generic_signer));
 
         // let rpc_url: reqwest::Url =
     //     "https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86".parse()?;
