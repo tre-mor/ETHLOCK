@@ -46,6 +46,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>>
 
     println!("    address: {:#?}", key_info::derive_address_from_generic_signer(&generic_signer));
 
+    println!("    address: {}", key_info::remove_hex_prefix_from_fixed_bytes
+        (
+            &key_info::derive_address_from_generic_signer(&generic_signer)
+        )
+    );
+
+    println!(" public key: {}", key_info::derive_verifying_key_from_signing_key(&generic_signer));
+
         // let rpc_url: reqwest::Url =
     //     "https://site1.moralis-nodes.com/eth/d2efae9b74dc45bf9c161e4b13c2cd86".parse()?;
     // let provider = ProviderBuilder::new().on_http(rpc_url);

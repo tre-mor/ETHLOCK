@@ -27,9 +27,9 @@ use k256::
         }, 
         NonZeroScalar
     },
-    Secp256k1,
+    Secp256k1, SecretKey,
 };
-
+// use std::time;
 pub type GenericSigner = LocalSigner<SigningKey>;
 
 /// Generates a new GenericSigner instance with a random signing key.
@@ -56,9 +56,9 @@ pub fn generate_new_seeded_signer<R: RngCore + CryptoRng>(rng: &mut R) -> Generi
 ///The private key is a NonZeroScalar of the Secp256k1 curve.
 ///
 /// note: `Secp256k1` implements Display, not Debug
-pub fn derive_private_key(generic_signer: &GenericSigner) -> &NonZeroScalar<Secp256k1>
+pub fn derive_private_key(generic_signer: &GenericSigner) -> NonZeroScalar<Secp256k1>
 {
-    generic_signer.as_nonzero_scalar()
+    *generic_signer.as_nonzero_scalar()
 }
 
 /// Returns the private key of the given GenericSigner as a String.
@@ -127,8 +127,17 @@ pub fn derive_address_from_signing_key(signing_key: &SigningKey) -> Address
     signers::utils::secret_key_to_address(signing_key)
 }
 
+/// Derives a VerifyingKey from a SigningKey.
+///
+/// This function returns a VerifyingKey associated with the given SigningKey.
+/// The returned VerifyingKey is derived from the public key of the SigningKey.
+pub fn derive_verifying_key_from_signing_key(signing_key: &SigningKey) -> VerifyingKey
+{
+    *signing_key.verifying_key()
+}
+
 /// Returns the Ethereum address derived from the given VerifyingKey.
-/// 
+///
 /// This function retrieves the address associated with the given VerifyingKey,
 /// which is derived from the public key of the VerifyingKey.
 /// 
@@ -137,3 +146,27 @@ pub fn derive_address_from_verifying_key(verifying_key: &VerifyingKey) -> Addres
 {
     signers::utils::public_key_to_address(verifying_key)
 }
+
+/// Derives a SecretKey from a FixedBytes input.
+/// 
+/// This function takes a FixedBytes type, which can also be a B256, and attempts
+/// to convert it into a SecretKey. The conversion involves extracting the raw bytes
+/// from the FixedBytes input and converting them into a NonZeroScalar of the Secp256k1 curve.
+/// An error is raised if the byte array is invalid.
+/// 
+/// note: this also takes B256
+pub fn derive_secret_key_from_fixed_bytes<const N: usize>(fixed_bytes: &FixedBytes<N>) -> SecretKey
+{
+    let raw_bytes: &[u8] = fixed_bytes.as_slice();
+
+    let nonzero_scalar: NonZeroScalar<Secp256k1> = NonZeroScalar::try_from(raw_bytes).expect("invalid byte array");
+
+    SecretKey::from(nonzero_scalar)
+}
+
+pub fn test<const N: usize>(fixed_bytes: &FixedBytes<N>) -> SecretKey
+{
+    SecretKey::from_slice(fixed_bytes.as_slice()).expect("invalid byte array")
+}
+
+// pub fn derive_public_key_from_secret_key
